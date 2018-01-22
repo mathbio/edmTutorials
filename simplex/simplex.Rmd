@@ -1,8 +1,8 @@
 ---
 title: "Simplex projection made simple"
-subtitle: "School on Physics Applications in Biology, January 2018"
-author: "Brenno Cabella, Roberto Kraenkel, Renato Coutinho, Paulo Inácio Prado, Rafael Lopes"
-date: "`r format(Sys.time(), '%d de %B de %Y')`"
+subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #2"
+author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Rafael Lopes, Roberto Kraenkel"
+date: "ICTP SAIRF São Paulo School of Mathematical Biology, January 2018"
 output:
          rmdformats::readthedown:
          self_contained: true
@@ -173,7 +173,7 @@ for(i in c(length(X)-2,neigb1+1)){
     z <- z+1}
 arrows(x0=neigb1+3, y0=X[neigb1+3], x1=length(X)*.99, y1=X[neigb1+3],
        col=cores[-1])
-points(length(X), p1.last, pch=17, cex=1.5)
+points(length(X), X[length(X)], pch=17, cex=1.5)
 ```
 
 
@@ -467,8 +467,11 @@ X4 <- diff(nich97I$total)
 
 #### 2
 S-mapping (Sugihara 1994) is another forecasting method that 
-can be used for identify another aspect of complex dynamics, called state-dependent behavior.
-This method is available in rEDM (see the tutorial of the package).
+can be used for identify another aspect of complex dynamics, 
+called state-dependent behavior.
+This method is available in rEDM (see the tutorial of the package). 
+Does this method provide additional insights about the dynamics behind
+Nicholson's results? 
 
 # Learn more
 
