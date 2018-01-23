@@ -14,3 +14,5 @@ All software below is available for Windows, Mac and Linux. For the latter, many
 ```
 - to run the interactive plots in your own computer, you also need the `plotly` package (`install.packages(c('plotly'))`) - this is not needed because the pages already allow exploration from your browser, and this package has more library dependencies, so it is more trouble to install.
 
+Now you can download and run the tutorials step-by-step, and adapt them to your own needs.
+
