@@ -24,6 +24,7 @@ opts_chunk$set(fig.align = 'center',
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
+
 This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly there is a real data analysis proposed as an exercise.
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) 
@@ -34,6 +35,7 @@ So to start open R and load the package typing in the R console
 ```{r load rEDM, echo=TRUE}
 library(rEDM)
 ```
+
 
 Before you proceed,
 please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
@@ -120,11 +122,13 @@ df1 <- make_block(data.frame(x=x1), t=time1, max_lag = 2)
 A quick look at the first and last lines of the data frame
 can help to understand the lagged variabel structure:
 
+
 ```{r check lagged dataframe}
 ## Take a look in the lagged data to understand how the function works
 head(df1)
 tail(df1)
 ```
+
 By ploting the time series
 in function of their lagged versions we get the
 shadow manyfold, which is similar to the original one: 
@@ -137,15 +141,27 @@ plot(x_1 ~ x, data=df1, type="l",
 Comentários sobre a correspondência entre a reconstrução e o atrator original.
 
 
+
 ## Noisy data
 
 How robust is the atratctor reconstruction to random noise?
+There are mainly two types of noise or error in data, which we call
+**process errors** and
+**observational errors**. The first one is about random changes of the
+state variables, like environmental fluctuations that affect the
+dynamic. The
+second type of error appears when we are not totally able to measure
+the interesting data, when we miss some counts on the counting of
+individuals of species, or do error in the sampling or measurements.
+Observational errors do not affect the dynamic, only the portrait
+we make of it.
+
 In this section we will check this simulating that the time series
 has measurement errors.
 Use the commands below to
 simulate that the time series has independent measurement errors with constant variance.
 To do that we add to each observation a value drawn from a Gaussian distribution with zero mean and
-standard deviation wich is a tenth of the standard deviation of the
+standard deviation wich is 1/12 of the standard deviation of the
 time series itself. 
 
 
@@ -168,6 +184,7 @@ plot(x_1 ~ x, data=df2, type="l",
      ylab = "X(t+1)", xlab = "X" , col="grey",
      lwd=0.5)
 ```
+
 Comentários sobre como a forma do atrator ainda está preservada, etc
 
 
@@ -186,11 +203,38 @@ plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
      ylab = "X(t+1)", xlab = "X" )
 ```
 
-The atractor reconstruction looks worse now, but we can
-improve it by adding more dimensions to the shadow manyfold.
+The noisy serie in black and the original one in blue.
+
+Now we try to reconstruct the phase space by only lagging this noisy serie:
+
+```{r noise phase space, echo=TRUE}
+## Add lagged variables with error to the dataframe
+## note that we use the utility function lag
+df2 <- make_block( data.frame(x = x2), max_lag = 5)
+
+## Shadow manifold lag one
+plot(x ~ x_1, data=df2, type="b")
+```
+
+The atractor reconstruction looks worse now, but we can overcome this
+problem by replacing the lagged series by another with an increrased
+lag  and see how the reconstructed atractor changes:
+
+```{r more noise phase space, echo=TRUE}
+## Checking increasing lags (note that tau=0.2)
+plot(x ~ x_2, data=df2, type="b")
+plot(x ~ x_3, data=df2, type="b")
+plot(x ~ x_4, data=df2, type="b")
+```
+
+Another way to overcome the problem with noisy data is to to add more
+dimensions to the shadow manyfold.
 We do this adding more axes, that correspond to 
-the time series lagged again, but by the further time steps 
+the time series lagged by the further time steps 
 ($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
+Even the original manifold being in lower dimesion its is valid to
+reconstruct the state space with more dimensions[^1]:
+
 
 You can check with the interactive plot below
 how an additional dimension unfolds a bit more the reconstructed
@@ -247,10 +291,21 @@ can help you to understand the problem with small values of $\tau$:
 ```{r abline, eval=FALSE}
 abline(0,1, col="red")
 ```
+
+
 #### 2
 Check this site: http://www.physics.emory.edu/faculty/weeks//research/tseries4.html
 
-## Outro problema?
+
+## Atractor reconstruction
+By using only the functions learned at this tutorial, try to reconstruct the state space of this given time series, use the change in the lags and addition of dimensions to see from this time series belongs:
+
+```{r problem time series, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#load("~/Dropbox/R/nusdata.RData") ## tem que consertar este link
+#plot(problem_time_series$time,  problem_time_series$X, xlab = "time", ylab = "arbitrary units", type= "l")
+```
+This data can be found on the utilities directory from our
+minicourse directory 
 
 # Learn more
 
@@ -262,11 +317,13 @@ Check this site: http://www.physics.emory.edu/faculty/weeks//research/tseries4.h
   National Academy of Sciences, 112(13), pp.3856-3857. 
 * [Taken's Theorem](https://www.youtube.com/watch?v=QQwtrWBwxQg&list=PL-SSmlAMhY3bnogGTe2tf7hpWpl508pZZ&index=2), 
 a video by Sugihara's Lab.
+* Takens, Floris. "Detecting strange attractors in turbulence." Lecture notes in mathematics 898.1 (1981): 366-381.
 * Deyle, E.R. and Sugihara, G., 2011. Generalized theorems for
   nonlinear state space reconstruction. PLoS One, 6(3), p.e18295. 
 * Sauer, T., Yorke, J.A. and Casdagli, M., 1991. Embedology. Journal
   of statistical Physics, 65(3), pp.579-616. 
 
 
+[^1] Sauer, Tim, James A. Yorke, and Martin Casdagli. "Embedology." Journal of statistical Physics 65.3 (1991): 579-616.
 
 
