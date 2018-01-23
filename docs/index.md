@@ -4,14 +4,14 @@ This is a series of tutorials for the  [School on Physics Applications in Biolog
 
 ## 0. [Installation instructions](install.md)
 
-## 1. [Hands-on Takens Theorem and State Space reconstruction](Hands-on_Takens.html)
-Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.Rmd) or the [R file]().
+## 1. [A Quick Tour through State Space Reconstruction](Hands-on_Takens.html)
+Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.R).
 
 ## 2. [Simplex projection made simple](simplex.html)
-Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.Rmd) or the [R file]().
+Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.R).
 
 ## 3. [Convergent cross-mapping (CCM)](ccm.html)
-Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.Rmd) or the [R file]().
+Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.R).
 
 ## 4. Extended CCM analysis
 
