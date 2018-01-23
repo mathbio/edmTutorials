@@ -14,11 +14,10 @@ output:
 ---
 
 ```{r setup, echo=FALSE, warning=FALSE, message=F}
-library(knitr)#; library(zoo); library(xts)
+library(knitr)
 library(plotly)
 library(rEDM)
-library(ggplot2)#; library(cowplot)
-library(dplyr); library(tidyr)
+library(dplyr)
 
 
 opts_chunk$set(fig.align = 'center',
