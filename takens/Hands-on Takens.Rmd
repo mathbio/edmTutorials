@@ -31,13 +31,16 @@ opts_chunk$set(fig.align = 'center',
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
-This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly there is a real data analysis proposed as an exercise.
+This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data. In the last session there is a real data analysis proposed as exercise.
 For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
 
 Before you proceed,
 please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
 rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
+```{r call vignette, echo=TRUE, eval=FALSE}
+vignette("rEDM-tutorial", package="rEDM")
+```
 
 ## A system to study
 
