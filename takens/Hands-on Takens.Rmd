@@ -117,11 +117,11 @@ the interval between observations ($\tau=0.2$ time units).
 The R commands below creates a data table object ( which is called  a
 *data frame* in R) with the original time series and its lagged
 version. The  handy function `make_block` by the rEDM authors does this
-job. Use this [link](../utilities/make_block.R) to download the function to your working directory
-and then load it with the command:
+job. Use this command to dowload the function code and load it in your 
+R workspace:
 
 ```{r load make_block, eval=FALSE}
-source("../utilities/make_block.R")
+source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
 And now you can create a lagged variable data frame in R by copying the following code and
@@ -289,7 +289,7 @@ and how to solve them?
 
 ### Hints
 
-**1.** The command above adds a line $x(t) = x(t + tau)$ to the manifold, which
+**1.** The command below adds a line $x(t) = x(t + tau)$ to the manifold, which
 can help you to understand the problem with small values of $\tau$:
 
 ```{r abline, eval=FALSE}
@@ -301,14 +301,13 @@ abline(0,1, col="red")
 
 ## Attractor reconstruction
 
-By using only the functions learned at this tutorial, try to
-reconstruct the state space of the time series] in this [csv
-file]("problem-time-series.csv"), 
+In this exercise toy have to to
+reconstruct the state space of a time series in this, 
 checking if a three-dimensional manifold improve the reconstruction.
-To load the data in R download the csv file and run the command:
+To load the data in R run the command:
 
 ```{r problem time series}
-prob2 <- read.csv("problem-time-series.csv")
+prob2 <- read.csv("https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/problem-time-series.csv")
 ```
 And to take look in the time series plot run:
 
