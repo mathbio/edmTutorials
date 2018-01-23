@@ -1,7 +1,7 @@
 ---
 title: "A Quick Tour Through State Space reconstruction"
 subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #1"
-author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Rafael Lopes, Roberto Kraenkel"
+author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
 date: "ICTP SAIRF São Paulo School of Mathematical Biology, January 2018"
 
 ---
