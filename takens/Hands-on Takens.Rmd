@@ -22,6 +22,7 @@ library(dplyr); library(tidyr)
 library(xts)
 library(rgl)
 library(plotly)
+source("../utilities/make_block.R")
 
 opts_chunk$set(fig.align = 'center',
                fig.show = 'hold',
@@ -33,11 +34,11 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
 
 This tutorial presents the general idea of atractor reconstruction with syntetic data, 
-and lastly there is a synthetic and real data analysis proposed as exercises.
+and there is a simulated and real data analysis proposed as exercises.
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) 
-and the rEDM package installed in your working computer. 
-So to start open R and load the package typing in the R console
+and the rEDM package installed in your work computer. 
+To start, open R and load the package by typing the follwoing code in the R console:
 
 
 ```{r load rEDM, echo=TRUE}
@@ -45,7 +46,7 @@ library(rEDM)
 ```
 
 
-Before you proceed,
+Before you proceed
 please read pass through the essential concepts by 
 reading the introduction and the first section (*"Empirical Dynamic Modelling"*) of
 rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
@@ -60,7 +61,7 @@ vignette("rEDM-tutorial", package="rEDM")
 
 This first part is to get the grips with R language and to figure out how 
 to reconstruct a state space with only one time series and its lags.
-For the first example we use a very well known system and its representation on state space, 
+For the first example, we use a very well known system and its representation on state space, 
 the bidimensional harmonic oscilator:
 
 
@@ -83,7 +84,7 @@ plot(x1, y1, type = 'l', main = "State-space of harmonic oscilator",
      cex=0.2, xlab="x(t)", ylab="y(t)")
 ```
 
-And here is the time series for the two state variables:
+And here are the time series for the two state variables:
 
 ```{r time series of each variable}
 ## Time series of the 1st 250 observations
@@ -109,7 +110,7 @@ the original atractor, but it is a valid topological reconstruction of the
 original, a "shadow". 
 
 
-To do this we 
+To do this, we 
 generate new variables by lagging the time series 
 by multiples of a time interval $\tau$. In this case we will use
 the interval between observations ($\tau=0.2$ time units).
@@ -120,7 +121,7 @@ job. Use this [link](../utilities/make_block.R) to download the function to your
 and then load it with the command:
 
 ```{r load make_block, eval=FALSE}
-load("make_block.R")
+source("../utilities/make_block.R")
 ```
 
 And now you can create a lagged variable dataframe in R by copying the following code and
@@ -143,7 +144,7 @@ tail(df1)
 ```
 
 By ploting the time series
-in function of their lagged versions we get the
+as a function of their lagged versions we get the
 shadow manifold, which is similar to the original one: 
 
 ```{r shadow manifold}
@@ -166,24 +167,23 @@ We will learn more in the following tutorials of this course.
 
 # Noisy data
 
-How robust is the atratctor reconstruction to random noise?
-There are mainly two types of noise or error in data, which we call
+How robust is the atractor reconstruction to random noise?
+There are two main types of noise or error in data, which we call
 **process errors** and
 **observational errors**. The first one is about random changes of the
 state variables, like environmental fluctuations that affect the
 dynamic. The
-second type of error appears when we are not totally able to measure
-the interesting data, when we miss some counts on the counting of
+second type of error appears when we are not able to measure
+the data with total precision, when we miss some counts on the counting of
 individuals of species, or do error in the sampling or measurements.
 Observational errors do not affect the dynamic, only the portrait
 we make of it.
 
-In this section we will check this simulating that the time series
-has measurement errors.
+In this section, we check how robust the atractor is to error by adding simulated noise to the original time series.
 Use the commands below to
 simulate that the time series has independent measurement errors with constant variance.
-To do that we add to each observation a value drawn from a Gaussian distribution with zero mean and
-standard deviation wich is 1/12 of the standard deviation of the
+To do this, we add to each observation a value drawn from a Gaussian distribution with zero mean and
+standard deviation which is 1/12 of the standard deviation of the
 time series itself. 
 
 
@@ -208,8 +208,8 @@ plot(x_1 ~ x, data=df2, type="l",
      lwd=0.5)
 ```
 
-In this case the shadow manifold still depicts the 
-original shape of the attractor despite the noise caused by measurement errors.
+In this case the shadow manifold still looks like the 
+original shape of the attractor, despite the noise caused by measurement errors.
 
 ## Increasing the noise
 
