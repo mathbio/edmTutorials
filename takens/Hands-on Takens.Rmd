@@ -22,7 +22,6 @@ library(dplyr); library(tidyr)
 library(xts)
 library(rgl)
 library(plotly)
-source("../utilities/make_block.R")
 
 opts_chunk$set(fig.align = 'center',
                fig.show = 'hold',
@@ -117,7 +116,7 @@ the interval between observations ($\tau=0.2$ time units).
 The R commands below creates a data table object ( which is called  a
 *data frame* in R) with the original time series and its lagged
 version. The  handy function `make_block` by the rEDM authors does this
-job. Use this command to dowload the function code and load it in your 
+job. Use this command to download the function code and load it in your 
 R workspace:
 
 ```{r load make_block, eval=FALSE}
