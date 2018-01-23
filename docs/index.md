@@ -1,6 +1,6 @@
 # Introduction to `rEDM`: Empirical Dynamics Modeling in R
 
-## 1. [Takens](takens)
+## 1. [Hands-on Takens Theorem and State Space reconstruction](Hands-on_Takens.html)
 
 ## 2. [Simplex projection made simple](simplex.html)
 
