@@ -29,16 +29,15 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
 The first part of this tutorial introduces the rationale of **Simplex Projection**,
-which is one of the building blocks of Empirical Dynamics Modelling (EDM). In the second part
-we show how to run simplex projection with the [rEDM](https://cran.r-project.org/package=rEDM) 
-R package (Ye *et al.* 2017) to forecast values in a time series. We show also how the forecast
-skill of simplex projection reveals important properties of the dynamics behind a time series.
+which is one of the building blocks of Empirical Dynamics Modelling (EDM). The second part shows how to run a simplex projection using the [rEDM](https://cran.r-project.org/package=rEDM) 
+R package (Ye *et al.* 2017) to forecast values in a time series. Further, you will learn how the forecast
+skill of the simplex projection reveals important properties of the dynamics behind a time series.
 Hence, you will need the most recent version of [R](https://cran.r-project.org/) 
 and the rEDM package installed in your working computer.
 
 Before you proceed,
-please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
-rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
+please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of the
+rEDM's tutorial which you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
 
 
@@ -52,7 +51,7 @@ vignette("rEDM-tutorial", package="rEDM")
 ## The shadow manifold
 
 We will start by simulating a deterministic discrete-time dynamics with chaotic behavior.
-To create a time series from this dynamics with 150 time steps run the commands below in the R console:
+To create a 150-step time series of this dynamics run the commands below in the R console:
 
 
 ```{r generate data, echo=TRUE}
@@ -71,15 +70,16 @@ for(i in 3:150){
 }
 ```
 
-If all information you have about this system is the time series of variable X
+If you look at this system's dynamics through only one of the time series (time series of variable X, for example)
 the dynamics looks pretty messy:
 
 ```{r plot 1st time series}
 plot(X, xlab="Time", ylab="X", type="b", lty=3)
 ```
 
-Taken's Theorem provides a simple way to recover the rules that govern a dynamical 
-system by building a lagged cordinate plot.
+Surprisingly, there is a way to recover the rules that govern a dynamical system using the sequence of observations of only one of the variables of the system. 
+The Taken's Theorem provides a simple way to recover the properties of a dynamical 
+system by building a lagged coordinate plot.
 Below you can play with such a plot for the time series of X. 
 Each point in this 3-D plot depicts the state of the system at a given time *t*, 
 and in the next two time steps (*t+1* and *t+2*). 
@@ -89,8 +89,8 @@ constrained to a certain subset of the plotting space,
 with a well defined shape. Please rotate the plot to check this.
 
 We call the plot space an *embedding*
-and the shape it reveals a *shadow manifold* of the true attractor of the dynamical system.
-For now let's assume that the embbedding depicted below
+and the shape it reveals is called a *shadow manifold* of the true attractor of the dynamical system.
+For now, let's assume that the embbedding depicted below
 satisfies Taken's Theorem [^2], and thus nearby points
 in the embedding space correspond to similar system states.
 
@@ -98,9 +98,9 @@ Now suppose we want to predict the last point of the time series (t = `r length(
 The blue point in the lagged plot below is X(t-3, t-2, t-1), which is the state 
 of the system immediately before t = `r length(X)`. 
 The first, second, third and fourth nearest neighbors of the blue
-point are depicted in red,green, orange, and magenta, respectively. 
-If you zoom in the points you will see segments linking each neighbor
-to the focal point. The length of these
+point are depicted in red, green, orange, and magenta, respectively. 
+If you zoom into the points, you will see segments linking each neighbor
+to the focal point we want to predict. The length of these
 segments are Euclidian distances. 
 You can also pan and rotate the plot to get a better idea of
 the spatial pattern of these points.

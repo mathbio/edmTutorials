@@ -1,0 +1,128 @@
+---
+title: "Hands-on Takens Theorem and State Space reconstruction"
+subtitle: "School on Physics Applications in Biology, January 2018"
+author: "Brenno Cabella, Roberto Kraenkel, Renato Coutinho, Paulo Inácio Prado, Rafael Lopes"
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+output:
+         rmdformats::readthedown:
+         self_contained: true
+         thumbnails: true
+         lightbox: true
+         gallery: false
+         highlight: tango
+         toc_depth: 4
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=F}
+library(knitr)#; library(zoo); library(xts)
+library(rEDM)
+library(ggplot2)#; library(cowplot)
+library(dplyr); library(tidyr)
+library(deSolve)
+library(xts)
+library(rgl)
+library(scatterplot3d)
+
+
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
+               fig.height = 5,
+               warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
+options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
+```
+
+This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly there is a real data analysis proposed as an exercise.
+For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
+
+Before you proceed,
+please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
+rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
+or in your local R installation with the command
+
+## A system to study
+
+This first part is to familiarize yourselves to the code language and be able to get the more complicated running with the course goes on, so we begin by trying to see how the theorem of Takens works to reconstruct a State space with only one time series and its lags.
+For the first example we use a very well known system and its representation on state space, the bidimensional harmonic oscilator, we can draw the state space putting together in the same plot its two degrees of freedom, $x(t)$ and $y(t)$, its governing equation is, $\dot{x}=y, \dot{y}=-x$, and its state space:
+
+```{r generate data for the harmonic oscilator, echo=TRUE}
+time1<-seq(1, 100, by = 0.2)
+x1<-sin(time1)
+y1<-cos(time1)
+
+plot(x1, y1, type = 'p', main = "State-space of harmonic oscilator",
+     cex=0.2, xlab="X", ylab="Y")
+```
+
+```{r time series of each variable}
+plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
+lines(time1, y1, col = "blue")
+```
+
+But not all time we have all the data about the system, in our example, we could not have one of the two time series which constitute the system, if $y(t)$ is missing we are not able to construct a state space as we saw, but by using the result of Takens theorem we can construct a shadow amnifold of the original one, by lagging the remaing series and plotting all together in the same phase-space we reach the reconstruction of the first state space, besides its not equal to the original one it maps one-to-one to the original, and as said in theorem, being a valid topological recosntruction of the original, a "shadow" of the original.
+
+```{r plot one time series alone}
+df <- data.frame(
+    time=time1[-length(x1)],
+    x.t0 = x1[1:(length(x1)-1)],
+    x.t1 =x1[2:length(x1)])
+```
+
+## A reconstruction of the state space
+
+Now we have to generate lags from the original series to be able to reconstruct the State space, and by plotting all together we get the shadow manifold which is similar to the original one:
+
+
+```{r shadow manifold}
+plot(x.t1 ~ x.t0, data=df)
+```
+
+## Noisy data
+
+
+```{r plot one time series alone}
+## a new vector of observed values + Gaussian iid error
+x2 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/10)
+## 
+plot(x2 ~ time1, type="b")
+lines(x1 ~time1, type="l", col="blue")
+## Add lagged variables with error to the dataframe
+## note that we use the utility function lag
+df2 <- make_block( data.frame(x = x2), max_lag = 5)
+
+## Shadow manifold lag one
+plot(x ~ x_1, data=df2, type="b")
+## Checking increasing lags (note that tau=0.2)
+plot(x ~ x_2, data=df2, type="b")
+plot(x ~ x_3, data=df2, type="b")
+plot(x ~ x_4, data=df2, type="b")
+```
+
+```{r time series of each variable}
+plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
+lines(time1, y1, col = "blue")
+```
+
+
+```{r more noise and 3D manyfold}
+x3 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/5)
+df3 <- make_block(data.frame(x=x3))
+plot(x ~x_1, data=df3, type="b")
+scatterplot3d(df3[, -1], type="b", angle=40)
+```
+
+
+# Learn more
+
+* Sugihara G. and R. M. May. 1990. Nonlinear forecasting as a way of distinguishing chaos 
+from measurement error in time series. Nature 344:734–741.
+* Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. 
+Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
+* Anderson C. & Sugihara G. Simplex projection - Order out the chaos. http://deepeco.ucsd.edu/simplex/
+* ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
+
+
+[^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
+
+[^2]: The [next section](#sub2) shows some compealling evidence for this.
+
+[^3]: For a full appraisal see: Deyle, E.R., Maher, M.C., Hernandez, R.D., Basu, S. and Sugihara, G., 2016. Global environmental drivers of influenza. Proceedings of the National Academy of Sciences, 113(46), pp.13081-13086.
