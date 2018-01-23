@@ -187,6 +187,7 @@ plot(x_1 ~ x, data=df2, type="l",
 
 Comentários sobre como a forma do atrator ainda está preservada, etc
 
+### Increasing the noise
 
 Measurement errors make atractors more complex by spreading
 points (and thus trajectories) over the state space. 
@@ -203,18 +204,6 @@ plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
      ylab = "X(t+1)", xlab = "X" )
 ```
 
-The noisy serie in black and the original one in blue.
-
-Now we try to reconstruct the phase space by only lagging this noisy serie:
-
-```{r noise phase space, echo=TRUE}
-## Add lagged variables with error to the dataframe
-## note that we use the utility function lag
-df2 <- make_block( data.frame(x = x2), max_lag = 5)
-
-## Shadow manifold lag one
-plot(x ~ x_1, data=df2, type="b")
-```
 
 The atractor reconstruction looks worse now, but we can overcome this
 problem by replacing the lagged series by another with an increrased
@@ -222,9 +211,12 @@ lag  and see how the reconstructed atractor changes:
 
 ```{r more noise phase space, echo=TRUE}
 ## Checking increasing lags (note that tau=0.2)
-plot(x ~ x_2, data=df2, type="b")
-plot(x ~ x_3, data=df2, type="b")
-plot(x ~ x_4, data=df2, type="b")
+plot(x ~ x_2, data=df3, type="l", col="grey", lwd=0.5,
+     ylab = "X(t+1)", xlab = "X")
+plot(x ~ x_3, data=df3, type="l", col="grey", lwd=0.5,
+     ylab = "X(t+1)", xlab = "X")
+plot(x ~ x_4, data=df3, type="l", col="grey", lwd=0.5,
+     ylab = "X(t+1)", xlab = "X")
 ```
 
 Another way to overcome the problem with noisy data is to to add more
@@ -232,7 +224,7 @@ dimensions to the shadow manyfold.
 We do this adding more axes, that correspond to 
 the time series lagged by the further time steps 
 ($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
-Even the original manifold being in lower dimesion its is valid to
+Even the if the original manifold has a lower dimension its is valid to
 reconstruct the state space with more dimensions[^1]:
 
 
