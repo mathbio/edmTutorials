@@ -32,15 +32,6 @@ This tutorial starts by presenting the general idea of Convergent Cross Mapping 
 In the last section a real data analysis is proposed as an exercise.
 For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
 
-Before you proceed,
-please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
-rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
-or in your local R installation with the command
-
-```{r call vignette, echo=TRUE, eval=FALSE}
-vignette("rEDM-tutorial", package="rEDM")
-```
-
 # Convergent Cross Mapping: From Chaos to Chaos-ality
 
 ## Syntetic Data
@@ -80,7 +71,7 @@ par(cex=1.1,lwd=2)
   
 ```
 
-The correlation coeficient between X and Y can becalculated and it is shown in the figure below.
+The correlation coeficient between X and Y is shown in the figure below.
 ```{r plot correlation}
 fit<-lm(Y ~ X)
 plot(X,Y,main='Correlation (X,Y)')
@@ -89,167 +80,212 @@ legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0
 
 ```
 
-Although the data comes from a model with is causality, X and Y are not correlated. Lack of correlation does not imply lack of causation.
+Although the data comes from a model with causality, X and Y are not correlated. 
+This is a clear example that "Lack of correlation does not imply lack of causation".
 
-## Cross Mapping
+## Cross Mapping[^1]
 
-What to do next? How can I extract this information from the coupled dynamics?
-As we have seen in a previous section, a generic property of lagged-coordinate embedding is that points x(t) on MX map 1:1 to points m(t) on M and local neighborhoods on MX map to local neighborhoods on M (19, 20). 
-It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions, MX and MY, will map to each other (3, 8, 19, 20, 24, 27, 35,37-42) since X and Y are essentially alternative observations of the common attractor manifold M.
+How can we extract this causality from the coupled dynamics?
+As we have seen in a previous section, a generic property of lagged-coordinate embedding is that points x(t) on MX map 1:1 to points m(t) on M and local neighborhoods on Mx map to local neighborhoods on M. 
 
-Convergent cross mapping determines how well local neighborhoods on MX
-correspond to local neighborhoods on MY and vice versa. 
-To do so, a manifold MX is constructed from lags of variable X and used to estimate contemporaneous values of Y. 
-Similarly, a manifold MY is constructed from lags of variable Y and used to estimate contemporaneous values of X.
+It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions, MX and MY, will map to each other since X and Y are essentially alternative observations of the common attractor manifold M.
+
+Convergent cross mapping determines how well local neighborhoods on Mx
+correspond to local neighborhoods on My and vice versa. 
+To do so, a manifold Mx is constructed from lags of variable X and used to estimate contemporaneous values of Y. 
+Similarly, a manifold My is constructed from lags of variable Y and used to estimate contemporaneous values of X.
 
 To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function.
 
-```{r optimal embeddings}
+```{r optimal embeddings X, echo=T}
 options(warn = -1)
-E_star_X<-which.max(simplex(X,silent=T)$rho)
+simplex_X<-simplex(X,silent=T)
+plot(simplex_X$rho,type='o')
+E_star_X<-which.max(simplex_X$rho)
 print(paste('E*(X) =',E_star_X))
+```
 
-E_star_Y<-which.max(simplex(Y,silent=T)$rho)
+```{r optimal embeddings Y, echo=T}
+simplex_Y<-simplex(Y,silent=T)
+plot(simplex_Y$rho,type='o')
+E_star_Y<-which.max(simplex_Y$rho)
 print(paste('E*(Y) =',E_star_Y))
 
 ```
 
-Now that we have the optimal embeddings, we can construct the lagged-coordinates MX and MY using the make_block from rEDM package. Use this command to download the function code and load it in your 
-R workspace:
+## Cross-mapping from Mx to My (X_xmap_Y)
+Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from rEDM package. Use this command to download the function code and load it in your
+R workspace (it will be included in rEDM itself in future releases):
 
-```{r load make_block, eval=FALSE}
+```{r load make_block, eval=TRUE, echo=FALSE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Shadow maninfold MX and 3 nearest neighbors from focal point.
-```{r MX X_xmap_Y}
+Now for the shadow manifold:
+
+```{r make_block, echo=T}
 
 Shadow_MXY<-make_block(XY,max_lag = 2)
 Shadow_MX<-Shadow_MXY[,2:3]
 Shadow_MY<-Shadow_MXY[,4:5]
-focal_point<-50
+
+head(Shadow_MXY)
+
+```
+
+To better understand the cross-mapping, lets start by performing one single prediction using the index of a single predictor.
+
+```{r MX X_xmap_Y_code, echo=T}
+
+predictor<-70
+
+```
+
+Here, we are using the therm "prediction", but instead of predicting future values of X, we will "predict values of Y(t) using X(t) and vice versa.
+This "cross-prediction" is performed between different variables but for the same point in time.
+
+Next, we obtain the indexes of the E*+1 nearest neighbors from the given predictor generating the simplex_Mx.
+
+```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
+neigb_X <- order(dist.matrix_X[predictor,])[2:4]
+neigh_X_print<-c(neigb_X)
+print(paste('simplex_Mx:',list(neigh_X_print)))
+```
+
+The following plot presents Mx with the predictor (red dot) and respective simplex_Mx (blue dots).
+```{r MX X_xmap_Y, echo=FALSE, fig.align='center'}
+p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'X'),yaxis = list(title = 'X(t-1)'),title='Mx') %>%
+  add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
+  add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(predictor,neigb_X),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_X)))
+p_MX_X_to_Y
+```
+
+The cross-mapping process starts by finding (mapping) the simplex_Mx in My, creating the simplex_My.
+Note that simplex_My has the same indexes as simplex_Mx.
+The figure below shows My and simplex_My (green dots).
+```{r MY_X_xmap_Y}
+p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y (t-1)'),title='My') %>%
+  add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
+  add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(neigb_X),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_X)))
+p_MY_X_to_Y
+
+```
+The simplex(My) will then be used to estimate the contemporaneous value of the predictor in My, obtaining the predicted value Y(tilda). 
+```{r estimating Y from X (X_xmap_Y), echo=T}
+lib<-lib <- c(1, NROW(Shadow_MXY))
+block_lnlp_output_XY <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
+ "X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
+observed_all_Y <- block_lnlp_output_XY$model_output[[1]]$obs
+predicted_all_Y <- block_lnlp_output_XY$model_output[[1]]$pred
+pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y))
+colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
+head(pred_obs_Y)
+```
+
+Taking every prediction in the series will provides us with many comparisons between predicted and observed.
+This is better vizualized in the plot below.
+The red dot represents the predictor used in the example above.
+
+```{r plot_obs_pred_MX_MY}
+fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
+plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
+plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed",
+ylab = "Predicted")
+abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
+observed_pred_Y<-observed_all_Y[predictor-2]
+predicted_pred_Y<-predicted_all_Y[predictor-2]
+points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
+```
+
+
+
+
+
+## Cross-mapping from My to Mx 
+
+Similarly to the previous mapping, we obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
+However, since we are cross-mapping from My to Mx, the simplex_My is generate in shadow maninfold My.
+
+```{r neighbors_y, echo=T}
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
-neigb_X <- order(dist.matrix_X[focal_point,])[2:4]
-neigb_Y <- order(dist.matrix_Y[focal_point,])[2:4]
-color=rgb(0,0,0,alpha=0.1)
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,main='MX',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],col='red',cex=2.5, pch = 1, lwd = 4)
-points(Shadow_MX[neigb_X[1],2],Shadow_MX[neigb_X[1],1],pch=16,col='blue')
-points(Shadow_MX[neigb_X[2],2],Shadow_MX[neigb_X[2],1],pch=16,col='blue')
-points(Shadow_MX[neigb_X[3],2],Shadow_MX[neigb_X[3],1],pch=16,col='blue')
-
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,xlim=c(Shadow_MX[focal_point,2]-0.05,Shadow_MX[focal_point,2]+0.05),ylim=c(Shadow_MX[focal_point,1]-0.1,Shadow_MX[focal_point,1]+0.1),main='MX (Zoom in)',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],pch=16,col='red',cex=1.5)
-points(Shadow_MX[neigb_X[1],2],Shadow_MX[neigb_X[1],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MX[neigb_X[2],2],Shadow_MX[neigb_X[2],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MX[neigb_X[3],2],Shadow_MX[neigb_X[3],1],pch=16,col='blue',cex=1.5)
-
-
-
-```
-Shadow maninfold MY and contemporary nearest neighbors from focal point.
-```{r MY X_xmap_Y}
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,main='MY',xlab='y(t)',ylab='y(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],pch=16,col='red')
-points(Shadow_MY[neigb_X[1],2],Shadow_MY[neigb_X[1],1],pch=16,col='blue')
-points(Shadow_MY[neigb_X[2],2],Shadow_MY[neigb_X[2],1],pch=16,col='blue')
-points(Shadow_MY[neigb_X[3],2],Shadow_MY[neigb_X[3],1],pch=16,col='blue')
-```
-Shadow Maninfold MY and 3 nearest neighbors from focal point.
-
-```{r MY - Y_xmap_X}
-
-color=rgb(0,0,0,alpha=0.1)
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,main='MX',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],col='red',cex=2.5, pch = 1, lwd = 4)
-points(Shadow_MY[neigb_Y[1],2],Shadow_MY[neigb_Y[1],1],pch=16,col='blue')
-points(Shadow_MY[neigb_Y[2],2],Shadow_MY[neigb_Y[2],1],pch=16,col='blue')
-points(Shadow_MY[neigb_Y[3],2],Shadow_MY[neigb_Y[3],1],pch=16,col='blue')
-
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,xlim=c(Shadow_MY[focal_point,2]-0.1,Shadow_MY[focal_point,2]+0.1),ylim=c(Shadow_MY[focal_point,1]-0.1,Shadow_MY[focal_point,1]+0.1),main='MY (Zoom in)',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],pch=16,col='red',cex=1.5)
-points(Shadow_MY[neigb_Y[1],2],Shadow_MY[neigb_Y[1],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MY[neigb_Y[2],2],Shadow_MY[neigb_Y[2],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MY[neigb_Y[3],2],Shadow_MY[neigb_Y[3],1],pch=16,col='blue',cex=1.5)
-
-
-
-```
-Shadow maninfold MX and contemporary nearest neighbors from focal point.
-
-```{r MX Y_xmap_X}
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,main='MX',xlab='y(t)',ylab='y(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],pch=16,col='red')
-points(Shadow_MX[neigb_Y[1],2],Shadow_MX[neigb_Y[1],1],pch=16,col='blue')
-points(Shadow_MX[neigb_Y[2],2],Shadow_MX[neigb_Y[2],1],pch=16,col='blue')
-points(Shadow_MX[neigb_Y[3],2],Shadow_MX[neigb_Y[3],1],pch=16,col='blue')
+neigb_Y <- order(dist.matrix_Y[predictor,])[2:4]
+neigh_Y_print<-c(neigb_Y)
+print(paste('simplex_My:',list(neigh_Y_print)))
 ```
 
+The following plot presents My with the predictor (red dot) and respective simplex_My (blue dots).
+```{r MY Y_xmap_X, echo=FALSE, fig.align='center'}
+p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y(t-1)'),title='My') %>%
+  add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
+  add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(predictor,neigb_Y),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_Y)))
+p_MY_Y_to_X
+```
 
-Similarly to simplex, we can use he cross-mapping from Y to X to estimate X.
-The next figure presents the correlation between observed and estimated values of X.
+Next, we map the simplex_My in Mx, creating the simplex_Mx.
+Analogously, simplex_Mx has the same indexes as simplex_My.
+The figure below shows Mx and simplex_Mx (green dots).
+```{r MX_Y_xmap_X}
+p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'X'),yaxis = list(title = 'X (t-1)'),title='Mx') %>%
+  add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
+  add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(neigb_Y),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_Y)))
+p_MX_Y_to_X
 
-```{r estimating X from Y}
+```
+
+The simplex(Mx) will then be used to estimate the contemporaneous value of the predictor in Mx, obtaining the predicted value X(tilda). 
+```{r estimating X from Y (Y_xmap_X), echo=T}
 lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
- "Y","Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
-observed <- block_lnlp_output$model_output[[1]]$obs
-predicted <- block_lnlp_output$model_output[[1]]$pred
-
-fit_YX<-lm(predicted ~ observed)
-plot_range <- range(c(observed, predicted), na.rm = TRUE)
-plot(observed, predicted, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
-legend(x = "bottomright", legend = paste('r =',round(cor(observed,predicted)*100)/100),inset = 0.02,col = 'black',lty = 1)
-
-
+block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y",
+ "Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
+observed_all_X <- block_lnlp_output_YX$model_output[[1]]$obs
+predicted_all_X <- block_lnlp_output_YX$model_output[[1]]$pred
+pred_obs_X<-as.data.frame(cbind(predicted_all_X,observed_all_X))
+colnames(pred_obs_X)<-c('Predicted X','Observed X')
+head(pred_obs_X)
 
 ```
 
-Do you expect to estimate Y from X?
+Below is the plot for all predictions and observations as well as the Pearson's correlation coefficient.
+The red dot represents the predictor used in the example above.
 
-```{r estimating Y from X}
-lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
- "X","X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
-observed <- block_lnlp_output$model_output[[1]]$obs
-predicted <- block_lnlp_output$model_output[[1]]$pred
-
-fit_YX<-lm(predicted ~ observed)
-plot_range <- range(c(observed, predicted), na.rm = TRUE)
-plot(observed, predicted, xlim = plot_range, ylim = plot_range, xlab = "Observed",
+```{r plot_obs_pred_MY_MX}
+fit_XY<-lm(predicted_all_X ~ observed_all_X)
+plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed",
 ylab = "Predicted")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
-legend(x = "bottomleft", legend = paste('r =',round(cor(observed,predicted)*100)/100),inset = 0.02,col = 'black',lty = 1)
-
+abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
+observed_pred_X<-observed_all_X[predictor-2]
+predicted_pred_X<-predicted_all_X[predictor-2]
+points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
 
 ```
 
 
-## What does it all mean?
+# What does it all mean?
 
-Neighbors from a focal point in MY will be close to the concomitant neighbors for this same focal point in MX.
-In another words, if X causes Y, the cross mapping skill from MY to MX is generally better than the cross mapping from MX to MY.
-The causal variable (X) is contained in the dynamics of the effect (Y), therefore we can use the effect (Y) to estimate the cause (X).
-
+From the previous results, if we use Y to estimate X we obtain good predictions.
+Since there is information about X inside Y, we can use Y to estimate X.
+In another words, if X causes Y, the cross mapping skill from My to Mx will generally gives us good results (high correlations).
 Important to note here is the inverse relation between cross mapping and causality.
-To better understand this relation, think about the dynamics of rain and vegetation.
-We can roughly estimate how much have rained by loooking at the increase or decrease of vegetation.
-Therefore, the cross mapping from Vegetation to Rain will give us good estimates of how much have rained.
 
 ## Convergent part of CCM
 
-Convergence means that cross-mapped estimates improve in estimationskill with time-series length L (sample size used to construct a library).
+Convergence means that cross-mapped estimates improve in estimation skill with time-series length L (sample size used to construct a library).
 
 
 
 ```{r convergent}
   # cross map from X to Y
-  X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 150, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+  X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
   # cross map from Y to X
-  Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 150, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+  Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
   
   #mean values
   X_xmap_Y_means <- ccm_means(X_xmap_Y)
@@ -290,8 +326,4 @@ Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
 * ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
 
 
-[^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
-
-[^2]: The [next section](#sub2) shows some compealling evidence for this.
-
-[^3]: For a full appraisal see: Deyle, E.R., Maher, M.C., Hernandez, R.D., Basu, S. and Sugihara, G., 2016. Global environmental drivers of influenza. Proceedings of the National Academy of Sciences, 113(46), pp.13081-13086.
+[^1]: This section is adapted from: Sugihara et al., Detecting Causality in Complex Ecosystems (Supplementary Materials), Science, 2012.

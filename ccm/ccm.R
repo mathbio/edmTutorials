@@ -12,9 +12,6 @@ opts_chunk$set(fig.align = 'center',
                warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
-## ----call vignette, echo=TRUE, eval=FALSE--------------------------------
-## vignette("rEDM-tutorial", package="rEDM")
-
 ## ----generate data, echo=TRUE--------------------------------------------
 
 ## Two vectors to store data
@@ -48,114 +45,128 @@ abline(fit$coefficients[1],fit$coefficients[2])
 legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
 
 
-## ----optimal embeddings--------------------------------------------------
+## ----optimal embeddings X, echo=T----------------------------------------
 options(warn = -1)
-E_star_X<-which.max(simplex(X,silent=T)$rho)
+simplex_X<-simplex(X,silent=T)
+plot(simplex_X$rho,type='o')
+E_star_X<-which.max(simplex_X$rho)
 print(paste('E*(X) =',E_star_X))
 
-E_star_Y<-which.max(simplex(Y,silent=T)$rho)
+## ----optimal embeddings Y, echo=T----------------------------------------
+simplex_Y<-simplex(Y,silent=T)
+plot(simplex_Y$rho,type='o')
+E_star_Y<-which.max(simplex_Y$rho)
 print(paste('E*(Y) =',E_star_Y))
 
 
-## ----load make_block, eval=FALSE-----------------------------------------
-## source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
+## ----load make_block, eval=TRUE, echo=FALSE------------------------------
+source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 
-## ----MX X_xmap_Y---------------------------------------------------------
+## ----make_block, echo=T--------------------------------------------------
 
 Shadow_MXY<-make_block(XY,max_lag = 2)
 Shadow_MX<-Shadow_MXY[,2:3]
 Shadow_MY<-Shadow_MXY[,4:5]
-focal_point<-50
+
+head(Shadow_MXY)
+
+
+## ----MX X_xmap_Y_code, echo=T--------------------------------------------
+
+predictor<-70
+
+
+## ----neighbors_X, echo=T-------------------------------------------------
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
+neigb_X <- order(dist.matrix_X[predictor,])[2:4]
+neigh_X_print<-c(neigb_X)
+print(paste('simplex_Mx:',list(neigh_X_print)))
+
+## ----MX X_xmap_Y, echo=FALSE, fig.align='center'-------------------------
+p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'X'),yaxis = list(title = 'X(t-1)'),title='Mx') %>%
+  add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
+  add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(predictor,neigb_X),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_X)))
+p_MX_X_to_Y
+
+## ----MY_X_xmap_Y---------------------------------------------------------
+p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y (t-1)'),title='My') %>%
+  add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
+  add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(neigb_X),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_X)))
+p_MY_X_to_Y
+
+
+## ----estimating Y from X (X_xmap_Y), echo=T------------------------------
+lib<-lib <- c(1, NROW(Shadow_MXY))
+block_lnlp_output_XY <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
+ "X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
+observed_all_Y <- block_lnlp_output_XY$model_output[[1]]$obs
+predicted_all_Y <- block_lnlp_output_XY$model_output[[1]]$pred
+pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y))
+colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
+head(pred_obs_Y)
+
+## ----plot_obs_pred_MX_MY-------------------------------------------------
+fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
+plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
+plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed",
+ylab = "Predicted")
+abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
+observed_pred_Y<-observed_all_Y[predictor-2]
+predicted_pred_Y<-predicted_all_Y[predictor-2]
+points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
+
+## ----neighbors_y, echo=T-------------------------------------------------
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
-neigb_X <- order(dist.matrix_X[focal_point,])[2:4]
-neigb_Y <- order(dist.matrix_Y[focal_point,])[2:4]
-color=rgb(0,0,0,alpha=0.1)
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,main='MX',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],col='red',cex=2.5, pch = 1, lwd = 4)
-points(Shadow_MX[neigb_X[1],2],Shadow_MX[neigb_X[1],1],pch=16,col='blue')
-points(Shadow_MX[neigb_X[2],2],Shadow_MX[neigb_X[2],1],pch=16,col='blue')
-points(Shadow_MX[neigb_X[3],2],Shadow_MX[neigb_X[3],1],pch=16,col='blue')
+neigb_Y <- order(dist.matrix_Y[predictor,])[2:4]
+neigh_Y_print<-c(neigb_Y)
+print(paste('simplex_My:',list(neigh_Y_print)))
 
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,xlim=c(Shadow_MX[focal_point,2]-0.05,Shadow_MX[focal_point,2]+0.05),ylim=c(Shadow_MX[focal_point,1]-0.1,Shadow_MX[focal_point,1]+0.1),main='MX (Zoom in)',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],pch=16,col='red',cex=1.5)
-points(Shadow_MX[neigb_X[1],2],Shadow_MX[neigb_X[1],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MX[neigb_X[2],2],Shadow_MX[neigb_X[2],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MX[neigb_X[3],2],Shadow_MX[neigb_X[3],1],pch=16,col='blue',cex=1.5)
+## ----MY Y_xmap_X, echo=FALSE, fig.align='center'-------------------------
+p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y(t-1)'),title='My') %>%
+  add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
+  add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(predictor,neigb_Y),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_Y)))
+p_MY_Y_to_X
 
-
-
-
-## ----MY X_xmap_Y---------------------------------------------------------
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,main='MY',xlab='y(t)',ylab='y(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],pch=16,col='red')
-points(Shadow_MY[neigb_X[1],2],Shadow_MY[neigb_X[1],1],pch=16,col='blue')
-points(Shadow_MY[neigb_X[2],2],Shadow_MY[neigb_X[2],1],pch=16,col='blue')
-points(Shadow_MY[neigb_X[3],2],Shadow_MY[neigb_X[3],1],pch=16,col='blue')
-
-## ----MY - Y_xmap_X-------------------------------------------------------
-
-color=rgb(0,0,0,alpha=0.1)
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,main='MX',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],col='red',cex=2.5, pch = 1, lwd = 4)
-points(Shadow_MY[neigb_Y[1],2],Shadow_MY[neigb_Y[1],1],pch=16,col='blue')
-points(Shadow_MY[neigb_Y[2],2],Shadow_MY[neigb_Y[2],1],pch=16,col='blue')
-points(Shadow_MY[neigb_Y[3],2],Shadow_MY[neigb_Y[3],1],pch=16,col='blue')
-
-plot(Shadow_MY[,2],Shadow_MY[,1],col = color, pch=16,xlim=c(Shadow_MY[focal_point,2]-0.1,Shadow_MY[focal_point,2]+0.1),ylim=c(Shadow_MY[focal_point,1]-0.1,Shadow_MY[focal_point,1]+0.1),main='MY (Zoom in)',xlab='x(t)',ylab='x(t+1)')
-points(Shadow_MY[focal_point,2],Shadow_MY[focal_point,1],pch=16,col='red',cex=1.5)
-points(Shadow_MY[neigb_Y[1],2],Shadow_MY[neigb_Y[1],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MY[neigb_Y[2],2],Shadow_MY[neigb_Y[2],1],pch=16,col='blue',cex=1.5)
-points(Shadow_MY[neigb_Y[3],2],Shadow_MY[neigb_Y[3],1],pch=16,col='blue',cex=1.5)
+## ----MX_Y_xmap_X---------------------------------------------------------
+p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+  layout(xaxis = list(title = 'X'),yaxis = list(title = 'X (t-1)'),title='Mx') %>%
+  add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
+  add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(neigb_Y),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_Y)))
+p_MX_Y_to_X
 
 
-
-
-## ----MX Y_xmap_X---------------------------------------------------------
-plot(Shadow_MX[,2],Shadow_MX[,1],col = color, pch=16,main='MX',xlab='y(t)',ylab='y(t+1)')
-points(Shadow_MX[focal_point,2],Shadow_MX[focal_point,1],pch=16,col='red')
-points(Shadow_MX[neigb_Y[1],2],Shadow_MX[neigb_Y[1],1],pch=16,col='blue')
-points(Shadow_MX[neigb_Y[2],2],Shadow_MX[neigb_Y[2],1],pch=16,col='blue')
-points(Shadow_MX[neigb_Y[3],2],Shadow_MX[neigb_Y[3],1],pch=16,col='blue')
-
-## ----estimating X from Y-------------------------------------------------
+## ----estimating X from Y (Y_xmap_X), echo=T------------------------------
 lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
- "Y","Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
-observed <- block_lnlp_output$model_output[[1]]$obs
-predicted <- block_lnlp_output$model_output[[1]]$pred
+block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y",
+ "Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
+observed_all_X <- block_lnlp_output_YX$model_output[[1]]$obs
+predicted_all_X <- block_lnlp_output_YX$model_output[[1]]$pred
+pred_obs_X<-as.data.frame(cbind(predicted_all_X,observed_all_X))
+colnames(pred_obs_X)<-c('Predicted X','Observed X')
+head(pred_obs_X)
 
-fit_YX<-lm(predicted ~ observed)
-plot_range <- range(c(observed, predicted), na.rm = TRUE)
-plot(observed, predicted, xlim = plot_range, ylim = plot_range, xlab = "Observed",
+
+## ----plot_obs_pred_MY_MX-------------------------------------------------
+fit_XY<-lm(predicted_all_X ~ observed_all_X)
+plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed",
 ylab = "Predicted")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
-legend(x = "bottomright", legend = paste('r =',round(cor(observed,predicted)*100)/100),inset = 0.02,col = 'black',lty = 1)
-
-
-
-
-## ----estimating Y from X-------------------------------------------------
-lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
- "X","X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
-observed <- block_lnlp_output$model_output[[1]]$obs
-predicted <- block_lnlp_output$model_output[[1]]$pred
-
-fit_YX<-lm(predicted ~ observed)
-plot_range <- range(c(observed, predicted), na.rm = TRUE)
-plot(observed, predicted, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
-legend(x = "bottomleft", legend = paste('r =',round(cor(observed,predicted)*100)/100),inset = 0.02,col = 'black',lty = 1)
-
+abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
+observed_pred_X<-observed_all_X[predictor-2]
+predicted_pred_X<-predicted_all_X[predictor-2]
+points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
 
 
 ## ----convergent----------------------------------------------------------
   # cross map from X to Y
-  X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 150, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+  X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
   # cross map from Y to X
-  Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 150, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+  Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
   
   #mean values
   X_xmap_Y_means <- ccm_means(X_xmap_Y)
