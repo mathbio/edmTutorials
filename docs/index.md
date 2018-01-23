@@ -5,7 +5,7 @@ This is a series of tutorials for the  [School on Physics Applications in Biolog
 ## 0. [Installation instructions](install.md)
 
 ## 1. [A Quick Tour through State Space Reconstruction](Hands-on_Takens.html)
-Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.R).
+Download  <a href="https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.Rmd" download>the notebook</a> or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/Hands-on%20Takens.R).
 
 ## 2. [Simplex projection made simple](simplex.html)
 Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.R).
