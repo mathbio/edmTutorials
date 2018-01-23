@@ -19,6 +19,7 @@ library(plotly)
 library(rEDM)
 library(ggplot2)#; library(cowplot)
 library(dplyr); library(tidyr)
+source('../utilities/make_block.R')
 
 
 opts_chunk$set(fig.align = 'center',
