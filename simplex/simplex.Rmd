@@ -29,7 +29,8 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
 The first part of this tutorial introduces the rationale of **Simplex Projection**,
-which is one of the building blocks of Empirical Dynamics Modelling (EDM). The second part shows how to run a simplex projection using the [rEDM](https://cran.r-project.org/package=rEDM) 
+which is one of the building blocks of Empirical Dynamics Modelling (EDM). 
+The second part shows how to run a simplex projection using the [rEDM](https://cran.r-project.org/package=rEDM) 
 R package (Ye *et al.* 2017) to forecast values in a time series. Further, you will learn how the forecast
 skill of the simplex projection reveals important properties of the dynamics behind a time series.
 Hence, you will need the most recent version of [R](https://cran.r-project.org/) 

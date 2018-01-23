@@ -1,16 +1,9 @@
 ---
-title: "Hands-on Takens Theorem and State Space reconstruction"
-subtitle: "School on Physics Applications in Biology, January 2018"
-author: "Brenno Cabella, Roberto Kraenkel, Renato Coutinho, Paulo Inácio Prado, Rafael Lopes"
-date: "`r format(Sys.time(), '%d de %B de %Y')`"
-output:
-         rmdformats::readthedown:
-         self_contained: true
-         thumbnails: true
-         lightbox: true
-         gallery: false
-         highlight: tango
-         toc_depth: 4
+title: "A Quick Tour Through State Space reconstruction"
+subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #1"
+author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Rafael Lopes, Roberto Kraenkel"
+date: "ICTP SAIRF São Paulo School of Mathematical Biology, January 2018"
+
 ---
 
 ```{r setup, echo=FALSE, warning=FALSE, message=F}
@@ -18,111 +11,262 @@ library(knitr)#; library(zoo); library(xts)
 library(rEDM)
 library(ggplot2)#; library(cowplot)
 library(dplyr); library(tidyr)
-library(deSolve)
+#library(deSolve)
 library(xts)
 library(rgl)
-library(scatterplot3d)
-
+library(plotly)
 
 opts_chunk$set(fig.align = 'center',
                fig.show = 'hold',
                fig.height = 5,
-               warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
+               fig.width = 5, 
+               warning = FALSE, message = FALSE, error = FALSE, echo=TRUE)
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
 This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly there is a real data analysis proposed as an exercise.
-For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
+For these activities, you will need the most recent version of
+[R](https://cran.r-project.org/) 
+and the rEDM package installed in your working computer. 
+So to start open R and load the package typing in the R console
+
+
+```{r load rEDM, echo=TRUE}
+library(rEDM)
+```
 
 Before you proceed,
 please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
 rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
 
-## A system to study
 
-This first part is to familiarize yourselves to the code language and be able to get the more complicated running with the course goes on, so we begin by trying to see how the theorem of Takens works to reconstruct a State space with only one time series and its lags.
-For the first example we use a very well known system and its representation on state space, the bidimensional harmonic oscilator, we can draw the state space putting together in the same plot its two degrees of freedom, $x(t)$ and $y(t)$, its governing equation is, $\dot{x}=y, \dot{y}=-x$, and its state space:
+```{r call vignette, eval=FALSE}
+vignette("rEDM-tutorial", package="rEDM")
+```
+
+## A simple case: harmonic oscilator
+
+This first part is to get the grips with R language and to figure out how 
+to reconstruct a state space with only one time series and its lags.
+For the first example we use a very well known system and its representation on state space, 
+the bidimensional harmonic oscilator:
+
+$\dot{x}=y$
+
+$\dot{y}=-x$
+
+which has the solution $x(t)=\sin(t), \ y(t)=\cos(t)$ and so we can draw the state 
+space of this system by laying down in cartesian axis its two degrees of
+freedom, $x(t)$ and $y(t)$. This system has a circular atractor, that
+is, all the possible states lie over a circle in the state space:
 
 ```{r generate data for the harmonic oscilator, echo=TRUE}
-time1<-seq(1, 100, by = 0.2)
+## Generate the data at 0.2 time intervals
+time1<-seq(0, 500, by = 0.2) 
 x1<-sin(time1)
 y1<-cos(time1)
-
-plot(x1, y1, type = 'p', main = "State-space of harmonic oscilator",
-     cex=0.2, xlab="X", ylab="Y")
+## Plot the state space
+plot(x1, y1, type = 'l', main = "State-space of harmonic oscilator",
+     cex=0.2, xlab="x(t)", ylab="y(t)")
 ```
+
+And here is the time series for the two state variables:
 
 ```{r time series of each variable}
-plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
-lines(time1, y1, col = "blue")
-```
-
-But not all time we have all the data about the system, in our example, we could not have one of the two time series which constitute the system, if $y(t)$ is missing we are not able to construct a state space as we saw, but by using the result of Takens theorem we can construct a shadow amnifold of the original one, by lagging the remaing series and plotting all together in the same phase-space we reach the reconstruction of the first state space, besides its not equal to the original one it maps one-to-one to the original, and as said in theorem, being a valid topological recosntruction of the original, a "shadow" of the original.
-
-```{r plot one time series alone}
-df <- data.frame(
-    time=time1[-length(x1)],
-    x.t0 = x1[1:(length(x1)-1)],
-    x.t1 =x1[2:length(x1)])
+## Time series of the 1st 250 observations
+ind <- 1:250
+plot(time1[ind], x1[ind], type = 'l',
+     main = "Time series of the variables of the system",
+     col = "red")
+lines(time1[ind], y1[ind], col = "blue")
 ```
 
 ## A reconstruction of the state space
 
-Now we have to generate lags from the original series to be able to reconstruct the State space, and by plotting all together we get the shadow manifold which is similar to the original one:
+Now suppose all you information you have about this system is 
+a time series of one of the state variables, say $x$. 
+Because $y(t)$ is missing we are not able to construct a state
+space as we saw above, but by using the result of Takens theorem we can
+construct a **shadow manyfold** that recovers the information of 
+the true state space.  This reconstruction is not a copy of 
+the original atractor, but it is a valid topological reconstruction of the
+original, a "shadow". 
 
 
-```{r shadow manifold}
-plot(x.t1 ~ x.t0, data=df)
+To do this we 
+generate new variables by lagging the time series 
+by multiples of a time interval $\tau$. In this case we will use
+the interval between observations ($\tau=0.2$ time units).
+The R commands below creates a data table object ( which is called  a
+*data frame* in R) with the original time series and its lagged
+version. The  handy function `make_block` by the rEDM authors does this
+job. Use this [link](../utilities/make_block.R) to download the function to your working directory
+and then load it with the command:
+
+```{r load make_block, eval=FALSE}
+load("make_block.R")
 ```
 
-## Noisy data
+And now you can create a lagged variable dataframe in R by copying the following code and
+pasting in the R console:
 
 
 ```{r plot one time series alone}
+## Data frame with observations with tau = 0.2 with one lag
+df1 <- make_block(data.frame(x=x1), t=time1, max_lag = 2)
+```
+
+A quick look at the first and last lines of the data frame
+can help to understand the lagged variabel structure:
+
+```{r check lagged dataframe}
+## Take a look in the lagged data to understand how the function works
+head(df1)
+tail(df1)
+```
+By ploting the time series
+in function of their lagged versions we get the
+shadow manyfold, which is similar to the original one: 
+
+```{r shadow manyfold}
+plot(x_1 ~ x, data=df1, type="l",
+     xlab = "X", ylab = "X(t+1)" )
+```
+
+Comentários sobre a correspondência entre a reconstrução e o atrator original.
+
+
+## Noisy data
+
+How robust is the atratctor reconstruction to random noise?
+In this section we will check this simulating that the time series
+has measurement errors.
+Use the commands below to
+simulate that the time series has independent measurement errors with constant variance.
+To do that we add to each observation a value drawn from a Gaussian distribution with zero mean and
+standard deviation wich is a tenth of the standard deviation of the
+time series itself. 
+
+
+```{r plot one 2nd time series alone}
 ## a new vector of observed values + Gaussian iid error
-x2 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/10)
-## 
-plot(x2 ~ time1, type="b")
-lines(x1 ~time1, type="l", col="blue")
-## Add lagged variables with error to the dataframe
-## note that we use the utility function lag
-df2 <- make_block( data.frame(x = x2), max_lag = 5)
-
-## Shadow manifold lag one
-plot(x ~ x_1, data=df2, type="b")
-## Checking increasing lags (note that tau=0.2)
-plot(x ~ x_2, data=df2, type="b")
-plot(x ~ x_3, data=df2, type="b")
-plot(x ~ x_4, data=df2, type="b")
+x2 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/12)
+## Time series
+plot(x2[ind] ~ time1[ind], type="l")
+lines(x1[ind] ~time1[ind], type="l", col="blue")
 ```
 
-```{r time series of each variable}
-plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
-lines(time1, y1, col = "blue")
+We thus proceed by creating a new data frame with the lagged variables 
+and by ploting the new shadow manyfold:
+
+```{r 2D plot noisy series}
+## Data frame with lagged variables
+df2 <- make_block( data.frame(x = x2))
+## Shadow manyfold with embedding = 2
+plot(x_1 ~ x, data=df2, type="l",
+     ylab = "X(t+1)", xlab = "X" , col="grey",
+     lwd=0.5)
 ```
+Comentários sobre como a forma do atrator ainda está preservada, etc
 
 
-```{r more noise and 3D manyfold}
-x3 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/5)
+Measurement errors make atractors more complex by spreading
+points (and thus trajectories) over the state space. 
+Of course this effect gets larger as we increase the measurement
+error. We now will investigate a bit more how this affects
+the atractor reconstruction.
+The commands below doubles the measurement error of the time series
+and plots the shadow manyfold:
+
+```{r more noise}
+x3 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/6)
 df3 <- make_block(data.frame(x=x3))
-plot(x ~x_1, data=df3, type="b")
-scatterplot3d(df3[, -1], type="b", angle=40)
+plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
+     ylab = "X(t+1)", xlab = "X" )
 ```
 
+The atractor reconstruction looks worse now, but we can
+improve it by adding more dimensions to the shadow manyfold.
+We do this adding more axes, that correspond to 
+the time series lagged again, but by the further time steps 
+($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
+
+You can check with the interactive plot below
+how an additional dimension unfolds a bit more the reconstructed
+atractor.  In the following days we will learn some methods to find
+the optimal dimensions of the manyfold. By now the take-home message
+is: the more complex the atractor is, the more dimensions you
+will need to have a good reconstruction.
+
+
+```{r more noise 3D plot, echo=FALSE}
+plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
+        mode="lines", opacity=0.25) %>%
+    layout(scene=list(camera = list(eye = list(x = 0, y = 0, z = -2)),
+                      xaxis = list(title = 'X'),
+                      yaxis = list(title = 'X (t+1)'),
+                      zaxis = list(title = 'X (t+2)')))
+```
+
+# Problems
+
+## What is the effect of $\tau$ ?
+
+The commands below simulate a new time series of the bimensional
+harmonic oscilator without measurement
+error but with a much smaller interval between observations ($\tau=0.01$
+time units). 
+
+
+```{r smaller tau}
+## Generate the data at 0.01 time intervals
+time4<-seq(0, 500, by = 0.01) 
+x4<-sin(time4)
+y4<-cos(time4)
+```
+
+This change in $\tau$ affects the shape of the reconstruction:
+
+```{r smaller tau manyfold}
+df4 <- make_block(data.frame(x=x4), t=time4)
+plot(x_1 ~ x, data=df4, type="l",
+     xlab = "X", ylab = "X(t+1)" )
+```
+
+How do you explain that? Which practical issues does this fact bring
+and how to solve them?
+
+### Hints
+
+#### 1 
+The command above adds a line $x(t) = x(t+1)$ to the manyfold, which
+can help you to understand the problem with small values of $\tau$:
+
+
+```{r abline, eval=FALSE}
+abline(0,1, col="red")
+```
+#### 2
+Check this site: http://www.physics.emory.edu/faculty/weeks//research/tseries4.html
+
+## Outro problema?
 
 # Learn more
 
-* Sugihara G. and R. M. May. 1990. Nonlinear forecasting as a way of distinguishing chaos 
-from measurement error in time series. Nature 344:734–741.
-* Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. 
-Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
-* Anderson C. & Sugihara G. Simplex projection - Order out the chaos. http://deepeco.ucsd.edu/simplex/
-* ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
+* Sugihara, G., May, R., Ye, H., Hsieh, C.H., Deyle, E., Fogarty,
+  M. and Munch, S., 2012. Detecting causality in complex
+  ecosystems. science, 338(6106), pp.496-500.
+* DeAngelis, D.L. and Yurek, S., 2015. Equation-free modeling unravels
+  the behavior of complex ecological systems. Proceedings of the
+  National Academy of Sciences, 112(13), pp.3856-3857. 
+* [Taken's Theorem](https://www.youtube.com/watch?v=QQwtrWBwxQg&list=PL-SSmlAMhY3bnogGTe2tf7hpWpl508pZZ&index=2), 
+a video by Sugihara's Lab.
+* Deyle, E.R. and Sugihara, G., 2011. Generalized theorems for
+  nonlinear state space reconstruction. PLoS One, 6(3), p.e18295. 
+* Sauer, T., Yorke, J.A. and Casdagli, M., 1991. Embedology. Journal
+  of statistical Physics, 65(3), pp.579-616. 
 
 
-[^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
 
-[^2]: The [next section](#sub2) shows some compealling evidence for this.
 
-[^3]: For a full appraisal see: Deyle, E.R., Maher, M.C., Hernandez, R.D., Basu, S. and Sugihara, G., 2016. Global environmental drivers of influenza. Proceedings of the National Academy of Sciences, 113(46), pp.13081-13086.
