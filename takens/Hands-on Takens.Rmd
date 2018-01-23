@@ -1,6 +1,6 @@
 ---
 title: "A Quick Tour through State Space Reconstruction"
-subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #1"
+subtitle: "Tutorial 1 of The Short Course 'An Introduction to Empirical Dynamics Modelling', ICTP SAIRF"
 author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
 date: "ICTP SAIFR, School on Physics Applications in Biology, January 2018"
 output:
@@ -191,8 +191,8 @@ time series itself.
 ## a new vector of observed values + Gaussian iid error
 x2 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/12)
 ## Time series
-plot(x1[ind] ~ time1[ind], type="l", xlab = "X", ylab = "Time",
-     col="grey", lwd = 5)
+plot(x1[ind] ~ time1[ind], type="l", xlab = "Time", ylab = "X",
+     col="grey", lwd = 5, ylim=range(x2))
 lines(x2[ind] ~ time1[ind], type="l", col="red", lwd=2)
 ```
 
@@ -239,7 +239,7 @@ We do this adding more axes, that correspond to
 the time series lagged by the further time steps 
 ($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
 Even the if the original manifold has a lower dimension its is valid to
-reconstruct the state space with more dimensions [^1]
+reconstruct the state space with more dimensions (Sauer *et al*. 1991).
 
 
 You can check with the interactive plot below
@@ -250,7 +250,7 @@ is: the more complex the attractor is, the more dimensions you
 will need to have a good reconstruction.
 
 
-```{r more noise 3D plot, echo=FALSE}
+``{r more noise 3D plot, echo=FALSE, fig.align="center"}
 plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
         mode="lines", opacity=0.25) %>%
     layout(scene=list(camera = list(eye = list(x = 0, y = 0, z = -2)),
@@ -327,7 +327,7 @@ does this for one of the noisy
 time series we examined above:
 
 ```{r 3D plot with scatterplot3d}
-## Loads the package, if not available
+## Loads the package
 library(scatterplot3d)
 scatterplot3d(x = df2$x, y = df2$x_1, z = df2$x_2,
               type = "l", color="grey", lwd = 0.5,
@@ -347,7 +347,7 @@ install.packages("scatterplot3d")
 
 * Sugihara, G., May, R., Ye, H., Hsieh, C.H., Deyle, E., Fogarty,
   M. and Munch, S., 2012. Detecting causality in complex
-  ecosystems. science, 338(6106), pp.496-500.
+  ecosystems. Science, 338(6106), pp.496-500.
 * DeAngelis, D.L. and Yurek, S., 2015. Equation-free modeling unravels
   the behavior of complex ecological systems. Proceedings of the
   National Academy of Sciences, 112(13), pp.3856-3857. 
@@ -361,4 +361,3 @@ a video by Sugihara's Lab.
 
 
 
-[^1]: Sauer, Tim, James A. Yorke, and Martin Casdagli. "Embedology." Journal of statistical Physics 65.3 (1991): 579-616.
