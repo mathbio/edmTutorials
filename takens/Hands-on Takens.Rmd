@@ -2,8 +2,15 @@
 title: "A Quick Tour Through State Space reconstruction"
 subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #1"
 author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
-date: "ICTP SAIRF São Paulo School of Mathematical Biology, January 2018"
-
+date: "ICTP SAIFR, School on Physics Applications in Biology, January 2018"
+output:
+         rmdformats::readthedown:
+         self_contained: true
+         thumbnails: true
+         lightbox: true
+         gallery: false
+         highlight: tango
+         toc_depth: 4
 ---
 
 ```{r setup, echo=FALSE, warning=FALSE, message=F}
@@ -25,7 +32,8 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
 
-This tutorial presents the general idea of Convergent Cross Mapping (Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly there is a real data analysis proposed as an exercise.
+This tutorial presents the general idea of atractor reconstruction with syntetic data, 
+and lastly there is a synthetic and real data analysis proposed as exercises.
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) 
 and the rEDM package installed in your working computer. 
@@ -38,7 +46,8 @@ library(rEDM)
 
 
 Before you proceed,
-please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of
+please read pass through the essential concepts by 
+reading the introduction and the first section (*"Empirical Dynamic Modelling"*) of
 rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
 
@@ -47,24 +56,25 @@ or in your local R installation with the command
 vignette("rEDM-tutorial", package="rEDM")
 ```
 
-## A simple case: harmonic oscilator
+# A simple case: harmonic oscilator
 
 This first part is to get the grips with R language and to figure out how 
 to reconstruct a state space with only one time series and its lags.
 For the first example we use a very well known system and its representation on state space, 
 the bidimensional harmonic oscilator:
 
-$\dot{x}=y$
 
-$\dot{y}=-x$
+$\frac{dx}{dt}=y$
+
+$\frac{dy}{dt}=-x$
 
 which has the solution $x(t)=\sin(t), \ y(t)=\cos(t)$ and so we can draw the state 
-space of this system by laying down in cartesian axis its two degrees of
+space of this system by laying down in two  cartesian axis its two degrees of
 freedom, $x(t)$ and $y(t)$. This system has a circular atractor, that
 is, all the possible states lie over a circle in the state space:
 
 ```{r generate data for the harmonic oscilator, echo=TRUE}
-## Generate the data at 0.2 time intervals
+## Generate the data at tau = 0.2 time intervals
 time1<-seq(0, 500, by = 0.2) 
 x1<-sin(time1)
 y1<-cos(time1)
@@ -80,17 +90,20 @@ And here is the time series for the two state variables:
 ind <- 1:250
 plot(time1[ind], x1[ind], type = 'l',
      main = "Time series of the variables of the system",
-     col = "red")
+     col = "red", xlab = "Time", ylab = "Amplitude",
+     ylim=c(-1,1.25))
 lines(time1[ind], y1[ind], col = "blue")
+legend("topright", c("x","y"), col=c("red", "blue"),
+       lty=1, bty="n")
 ```
 
 ## A reconstruction of the state space
 
-Now suppose all you information you have about this system is 
+Now suppose that all you information you have about this system is 
 a time series of one of the state variables, say $x$. 
 Because $y(t)$ is missing we are not able to construct a state
 space as we saw above, but by using the result of Takens theorem we can
-construct a **shadow manyfold** that recovers the information of 
+construct a **shadow manifold** that recovers the information of 
 the true state space.  This reconstruction is not a copy of 
 the original atractor, but it is a valid topological reconstruction of the
 original, a "shadow". 
@@ -131,18 +144,27 @@ tail(df1)
 
 By ploting the time series
 in function of their lagged versions we get the
-shadow manyfold, which is similar to the original one: 
+shadow manifold, which is similar to the original one: 
 
-```{r shadow manyfold}
+```{r shadow manifold}
 plot(x_1 ~ x, data=df1, type="l",
-     xlab = "X", ylab = "X(t+1)" )
+     xlab = "X", ylab = "X(t + tau)" )
 ```
 
-Comentários sobre a correspondência entre a reconstrução e o atrator original.
+There is a minimum number of dimensions to build
+a valid rceonstruction of the original atractor.
+In this simple case we obviously need two dimensions.
+Takens Theorem guarantees that the number of dimensions
+is up to 2D + 1, where D is the dimmensionality of the 
+the attractor. Finding the optimal dimension for
+the shadow manifold is part of a vast topic called *Embedology*
+(Sauer *et al.* 1991). The package `rEDM` 
+has some methods to find
+the optimal dimensions of the manifold. 
+We will learn more in the following tutorials of this course.
 
 
-
-## Noisy data
+# Noisy data
 
 How robust is the atratctor reconstruction to random noise?
 There are mainly two types of noise or error in data, which we call
@@ -169,58 +191,50 @@ time series itself.
 ## a new vector of observed values + Gaussian iid error
 x2 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/12)
 ## Time series
-plot(x2[ind] ~ time1[ind], type="l")
-lines(x1[ind] ~time1[ind], type="l", col="blue")
+plot(x1[ind] ~ time1[ind], type="l", xlab = "X", ylab = "Time",
+     col="grey", lwd = 5)
+lines(x2[ind] ~ time1[ind], type="l", col="red", lwd=2)
 ```
 
 We thus proceed by creating a new data frame with the lagged variables 
-and by ploting the new shadow manyfold:
+and by ploting the new shadow manifold:
 
 ```{r 2D plot noisy series}
 ## Data frame with lagged variables
 df2 <- make_block( data.frame(x = x2))
-## Shadow manyfold with embedding = 2
+## Shadow manifold with embedding = 2
 plot(x_1 ~ x, data=df2, type="l",
-     ylab = "X(t+1)", xlab = "X" , col="grey",
+     ylab = "X(t + tau)", xlab = "X" , col="grey",
      lwd=0.5)
 ```
 
-Comentários sobre como a forma do atrator ainda está preservada, etc
+In this case the shadow manifold still depicts the 
+original shape of the attractor despite the noise caused by measurement errors.
 
-### Increasing the noise
+## Increasing the noise
 
 Measurement errors make atractors more complex by spreading
 points (and thus trajectories) over the state space. 
+Hence, the trajectories may cross in the shadow manifold,
+which breaks down the one to one  mapping to the original atractor.
 Of course this effect gets larger as we increase the measurement
 error. We now will investigate a bit more how this affects
 the atractor reconstruction.
 The commands below doubles the measurement error of the time series
-and plots the shadow manyfold:
+and plots the shadow manifold:
 
 ```{r more noise}
 x3 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/6)
 df3 <- make_block(data.frame(x=x3), max_lag = 5)
 plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
-     ylab = "X(t+1)", xlab = "X" )
+     ylab = "X(t + tau)", xlab = "X" )
 ```
 
 
 The atractor reconstruction looks worse now, but we can overcome this
-problem by replacing the lagged series by another with an increrased
-lag  and see how the reconstructed atractor changes:
-
-```{r more noise phase space, echo=TRUE}
-## Checking increasing lags (note that tau=0.2)
-plot(x ~ x_2, data=df3, type="l", col="grey", lwd=0.5,
-     ylab = "X(t+1)", xlab = "X")
-plot(x ~ x_3, data=df3, type="l", col="grey", lwd=0.5,
-     ylab = "X(t+1)", xlab = "X")
-plot(x ~ x_4, data=df3, type="l", col="grey", lwd=0.5,
-     ylab = "X(t+1)", xlab = "X")
-```
-
-Another way to overcome the problem with noisy data is to to add more
-dimensions to the shadow manyfold.
+problem by adding more dimensions to the shadow manifold. 
+By doing this we unfold the shadow manifold, that is
+unfolding crossing trajectories.
 We do this adding more axes, that correspond to 
 the time series lagged by the further time steps 
 ($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
@@ -231,7 +245,7 @@ reconstruct the state space with more dimensions[^1]:
 You can check with the interactive plot below
 how an additional dimension unfolds a bit more the reconstructed
 atractor.  In the following days we will learn some methods to find
-the optimal dimensions of the manyfold. By now the take-home message
+the optimal dimensions of the manifold. By now the take-home message
 is: the more complex the atractor is, the more dimensions you
 will need to have a good reconstruction.
 
@@ -241,8 +255,8 @@ plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
         mode="lines", opacity=0.25) %>%
     layout(scene=list(camera = list(eye = list(x = 0, y = 0, z = -2)),
                       xaxis = list(title = 'X'),
-                      yaxis = list(title = 'X (t+1)'),
-                      zaxis = list(title = 'X (t+2)')))
+                      yaxis = list(title = 'X (t + tau)'),
+                      zaxis = list(title = 'X (t + 2tau)')))
 ```
 
 # Problems
@@ -251,8 +265,8 @@ plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
 
 The commands below simulate a new time series of the bimensional
 harmonic oscilator without measurement
-error but with a much smaller interval between observations ($\tau=0.01$
-time units). 
+error but with a much smaller interval between observations 
+($\tau=0.01$ time units). 
 
 
 ```{r smaller tau}
@@ -264,10 +278,10 @@ y4<-cos(time4)
 
 This change in $\tau$ affects the shape of the reconstruction:
 
-```{r smaller tau manyfold}
+```{r smaller tau manifold}
 df4 <- make_block(data.frame(x=x4), t=time4)
 plot(x_1 ~ x, data=df4, type="l",
-     xlab = "X", ylab = "X(t+1)" )
+     xlab = "X", ylab = "X(t + tau)" )
 ```
 
 How do you explain that? Which practical issues does this fact bring
@@ -275,29 +289,60 @@ and how to solve them?
 
 ### Hints
 
-#### 1 
-The command above adds a line $x(t) = x(t+1)$ to the manyfold, which
+**1.** The command above adds a line $x(t) = x(t + tau)$ to the manifold, which
 can help you to understand the problem with small values of $\tau$:
-
 
 ```{r abline, eval=FALSE}
 abline(0,1, col="red")
 ```
 
-
-#### 2
-Check this site: http://www.physics.emory.edu/faculty/weeks//research/tseries4.html
+**2.** Check this site: (http://www.physics.emory.edu/faculty/weeks//research/tseries4.html)
 
 
 ## Atractor reconstruction
-By using only the functions learned at this tutorial, try to reconstruct the state space of this given time series, use the change in the lags and addition of dimensions to see from this time series belongs:
 
-```{r problem time series, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-#load("~/Dropbox/R/nusdata.RData") ## tem que consertar este link
-#plot(problem_time_series$time,  problem_time_series$X, xlab = "time", ylab = "arbitrary units", type= "l")
+By using only the functions learned at this tutorial, try to
+reconstruct the state space of the time series] in this [csv
+file]("problem-time-series.csv"), 
+checking if a three-dimensional manifold improve the reconstruction.
+To load the data in R download the csv file and run the command:
+
+```{r problem time series}
+prob2 <- read.csv("problem-time-series.csv")
 ```
-This data can be found on the utilities directory from our
-minicourse directory 
+And to take look in the time series plot run:
+
+```{r plot time series problem 2}
+plot( X ~ time, data = prob2, type="l")
+```
+
+### Hints
+
+**1.** Keep in mind the insight from the previous problem: 
+the value of $\tau$ 
+change the shape of the shadow manifold.
+
+**2.** To create a simple 3D plot in R you can use the 
+`scatterplot3d` package. The example below 
+does this for one of the noisy
+timeseries we examined above:
+
+```{r 3D plot with scatterplot3d}
+## Loads the package, if not available
+library(scatterplot3d)
+scatterplot3d(x = df2$x, y = df2$x_1, z = df2$x_2,
+              type = "l", color="grey", lwd = 0.5,
+              xlab = "x(t)", ylab = "x(t+tau)", zlab = "x(t + 2 tau)")
+```
+
+If the package is not available in your local R installation
+you can install it with:
+
+
+```{r install packages, eval=FALSE}
+install.packages("scatterplot3d")
+```
+
 
 # Learn more
 
@@ -309,7 +354,7 @@ minicourse directory
   National Academy of Sciences, 112(13), pp.3856-3857. 
 * [Taken's Theorem](https://www.youtube.com/watch?v=QQwtrWBwxQg&list=PL-SSmlAMhY3bnogGTe2tf7hpWpl508pZZ&index=2), 
 a video by Sugihara's Lab.
-* Takens, Floris. "Detecting strange attractors in turbulence." Lecture notes in mathematics 898.1 (1981): 366-381.
+* Takens, Floris. Detecting strange attractors in turbulence. Lecture notes in mathematics 898.1 (1981): 366-381.
 * Deyle, E.R. and Sugihara, G., 2011. Generalized theorems for
   nonlinear state space reconstruction. PLoS One, 6(3), p.e18295. 
 * Sauer, T., Yorke, J.A. and Casdagli, M., 1991. Embedology. Journal
