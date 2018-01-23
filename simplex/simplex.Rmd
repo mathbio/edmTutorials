@@ -36,7 +36,7 @@ You will need the most recent version of [R](https://cran.r-project.org/)
 and the `rEDM` package installed in your working computer.
 
 Before you proceed,
-please read carefully the introduction and the first section (*"Empirical Dynamic Modelling"*) of the
+make sure you have read the introduction and the first section (*"Empirical Dynamic Modelling"*) of the
 rEDM's tutorial which you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
 
