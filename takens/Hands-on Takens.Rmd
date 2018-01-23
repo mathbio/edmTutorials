@@ -199,7 +199,7 @@ and plots the shadow manyfold:
 
 ```{r more noise}
 x3 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/6)
-df3 <- make_block(data.frame(x=x3))
+df3 <- make_block(data.frame(x=x3), max_lag = 5)
 plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
      ylab = "X(t+1)", xlab = "X" )
 ```
