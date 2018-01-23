@@ -54,14 +54,14 @@ plot(x1, y1, type = 'p', main = "State-space of harmonic oscilator",
      cex=0.2, xlab="X", ylab="Y")
 ```
 
-```{r time series of each variable}
+```{r time series of each variable, echo=TRUE}
 plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
 lines(time1, y1, col = "blue")
 ```
 
-But not all time we have all the data about the system, in our example, we could not have one of the two time series which constitute the system, if $y(t)$ is missing we are not able to construct a state space as we saw, but by using the result of Takens theorem we can construct a shadow amnifold of the original one, by lagging the remaing series and plotting all together in the same phase-space we reach the reconstruction of the first state space, besides its not equal to the original one it maps one-to-one to the original, and as said in theorem, being a valid topological recosntruction of the original, a "shadow" of the original.
+But not all time we have all the data about the system, in our example, we could not have one of the two time series which constitute the system, if $y(t)$ is missing we are not able to construct a state space as we saw, but by using the result of Takens theorem we can construct a shadow manifold of the original one, by lagging the remaing series and plotting all together in the same phase-space we reach the reconstruction of the first state space, besides its not equal to the original one it maps one-to-one to the original, and as said in theorem, being a valid topological recosntruction of the original, a "shadow" of the original.
 
-```{r plot one time series alone}
+```{r plot one time series alone, echo=TRUE}
 df <- data.frame(
     time=time1[-length(x1)],
     x.t0 = x1[1:(length(x1)-1)],
@@ -73,57 +73,68 @@ df <- data.frame(
 Now we have to generate lags from the original series to be able to reconstruct the State space, and by plotting all together we get the shadow manifold which is similar to the original one:
 
 
-```{r shadow manifold}
+```{r shadow manifold, echo=TRUE}
 plot(x.t1 ~ x.t0, data=df)
 ```
 
+Question: 
+-Why this reconstructed atractor had become more thin and with slope than the original one?
+-If we have used the other series to reconstruct the atractor, we've got the same reconstruction?
 ## Noisy data
 
+Now we try to see how noisy change the reconstruction and deforme the data, are mainly two types of noise or error in measures, process and observational, the first one is about randown dwviations on the occurrency of the process, like a fluctuations on the gradient of the temperature which will became another fluctuation in the data collected from any biological system depending on temperatture. The second type of error appears when we are not totally able to measure the interesting data, when we miss some counts on the counting of individuals of species, or do error in the sampling.
 
-```{r plot one time series alone}
+In this tutorial we are concerned with the second type of error, observational error, we put this in the equations by only adding random desviation centered on zero on each point of the time serie:
+
+```{r adding noise, echo=TRUE}
 ## a new vector of observed values + Gaussian iid error
-x2 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/10)
+x2 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/10)
 ## 
 plot(x2 ~ time1, type="b")
 lines(x1 ~time1, type="l", col="blue")
+```
+
+The noisy serie in black and the original one in blue.
+
+Now we try to reconstruct the phase space by only lagging this noisy serie:
+
+```{r noise phase space, echo=TRUE}
 ## Add lagged variables with error to the dataframe
 ## note that we use the utility function lag
 df2 <- make_block( data.frame(x = x2), max_lag = 5)
 
 ## Shadow manifold lag one
 plot(x ~ x_1, data=df2, type="b")
+```
+
+To overcome the difficult of working with a noisy serie we can modify our reconstruction by replacing the lagged serie by another more lagged, instead of using the next lagged serie from the original one we put a serie more lagged, try to lag the series one step in time and see how the reconstructed atractor change:
+
+```{r more noise phase space, echo=TRUE}
 ## Checking increasing lags (note that tau=0.2)
 plot(x ~ x_2, data=df2, type="b")
 plot(x ~ x_3, data=df2, type="b")
 plot(x ~ x_4, data=df2, type="b")
 ```
 
-```{r time series of each variable}
-plot(time1, x1, type = 'l', main = "Time series of the variables of the system", col = "red")
-lines(time1, y1, col = "blue")
-```
-
+Still another way to overcome the work with noisy data, is to use more lagged series, going to higher dimensions of the reconstruction space, even the original manifold being in lower dimesion its is valid to reconstruct the state space with more dimensions[^1]:
 
 ```{r more noise and 3D manyfold}
-x3 <- x + rnorm(n = length(x), mean = 0, sd = sd(x)/5)
-df3 <- make_block(data.frame(x=x3))
+x3 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/10)
+df3 <- make_block(data.frame(x=x3), max_lag = 5)
 plot(x ~x_1, data=df3, type="b")
-scatterplot3d(df3[, -1], type="b", angle=40)
+scatterplot3d(df3[, c(2,5,6)], type="b", angle=40)
 ```
 
+# Problems
 
+By using only the functions learned at this tutorial, try to reconstruct the state space of this given time series, use the change in the lags and addition of dimensions to see from this time series belongs:
+
+```{r problem time series, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+load("~/Dropbox/R/nusdata.RData")
+plot(problem_time_series$time,  problem_time_series$X, xlab = "time", ylab = "arbitrary units", type= "l")
+```
+This data could be found on the utilities directory from our minicourse directory
 # Learn more
 
-* Sugihara G. and R. M. May. 1990. Nonlinear forecasting as a way of distinguishing chaos 
-from measurement error in time series. Nature 344:734–741.
-* Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. 
-Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
-* Anderson C. & Sugihara G. Simplex projection - Order out the chaos. http://deepeco.ucsd.edu/simplex/
-* ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
-
-
-[^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
-
-[^2]: The [next section](#sub2) shows some compealling evidence for this.
-
-[^3]: For a full appraisal see: Deyle, E.R., Maher, M.C., Hernandez, R.D., Basu, S. and Sugihara, G., 2016. Global environmental drivers of influenza. Proceedings of the National Academy of Sciences, 113(46), pp.13081-13086.
+*[^1] Sauer, Tim, James A. Yorke, and Martin Casdagli. "Embedology." Journal of statistical Physics 65.3 (1991): 579-616.
+*Takens, Floris. "Detecting strange attractors in turbulence." Lecture notes in mathematics 898.1 (1981): 366-381.
