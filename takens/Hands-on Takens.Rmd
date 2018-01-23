@@ -1,5 +1,5 @@
 ---
-title: "A Quick Tour Through State Space reconstruction"
+title: "A Quick Tour through State Space Reconstruction"
 subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIRF', Tutorial #1"
 author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
 date: "ICTP SAIFR, School on Physics Applications in Biology, January 2018"
@@ -34,7 +34,7 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
 
 This tutorial presents the general idea of atractor reconstruction with syntetic data, 
-and there is a simulated and real data analysis proposed as exercises.
+and then we propose exercises with simulated and real data analysis proposed.
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) 
 and the rEDM package installed in your work computer. 
