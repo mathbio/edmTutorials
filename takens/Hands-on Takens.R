@@ -37,8 +37,8 @@ lines(time1[ind], y1[ind], col = "blue")
 legend("topright", c("x","y"), col=c("red", "blue"),
        lty=1, bty="n")
 
-## ----load make_block, eval=FALSE-----------------------------------------
-## source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
+## ----load make_block, eval=TRUE, echo=FALSE------------------------------
+source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 
 ## ----plot one time series alone------------------------------------------
 ## Data frame with observations with tau = 0.2 with one lag
@@ -74,6 +74,14 @@ x3 <- x1 + rnorm(n = length(x1), mean = 0, sd = sd(x1)/6)
 df3 <- make_block(data.frame(x=x3), max_lag = 5)
 plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
      ylab = "X(t + tau)", xlab = "X" )
+
+## ----more noise 3D plot, echo=FALSE, fig.align="center"------------------
+plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
+        mode="lines", opacity=0.25) %>%
+    layout(scene=list(camera = list(eye = list(x = 0, y = 0, z = -2)),
+                      xaxis = list(title = 'X'),
+                      yaxis = list(title = 'X (t + tau)'),
+                      zaxis = list(title = 'X (t + 2tau)')))
 
 ## ----smaller tau---------------------------------------------------------
 ## Generate the data at 0.01 time intervals
