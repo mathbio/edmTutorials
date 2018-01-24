@@ -29,7 +29,7 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
 
 This tutorial presents the general idea of attractor reconstruction with synthetic data, 
-and then we propose exercises with simulated and real data analysis. 
+and proposes two exercises with simulated data. 
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) 
 and the rEDM package installed in your work computer. 
@@ -66,16 +66,16 @@ $\frac{dy}{dt}=-x$
 
 which has the solution $x(t)=A \sin(t), \ y(t)=A \cos(t)$, so we can draw the state 
 space of this system by laying down in two Cartesian axis its two state variables, $x(t)$ and $y(t)$. The attractors of this system are circles, that
-is, all possible trajectories form a circle in the state space:
+is, all possible trajectories of a solution form a circle in the state space:
 
-```{r generate data for the harmonic oscillator, echo=TRUE}
+```{r generates data for the harmonic oscillator, echo=TRUE}
 ## Generate the data at tau = 0.2 time intervals
 time1<-seq(0, 500, by = 0.2) 
 x1<-sin(time1)
 y1<-cos(time1)
 ## Plot the state space
 plot(x1, y1, type = 'l', main = "State-space of harmonic oscillator",
-     cex=0.2, xlab="x(t)", ylab="y(t)")
+     cex=0.2, xlab="X(t)", ylab="Y(t)")
 ```
 
 And here are the time series for the two state variables:
@@ -88,37 +88,39 @@ plot(time1[ind], x1[ind], type = 'l',
      col = "red", xlab = "Time", ylab = "Amplitude",
      ylim=c(-1,1.25))
 lines(time1[ind], y1[ind], col = "blue")
-legend("topright", c("x","y"), col=c("red", "blue"),
+legend("topright", c("X","Y"), col=c("red", "blue"),
        lty=1, bty="n")
 ```
 
 ## A reconstruction of the state space
 
 Now suppose that all the information you have about this system is 
-a time series of one of the state variables, say $x$. 
-Because $y(t)$ is missing, we are not able to construct a state
-space as we saw above, but by using the result of Takens theorem we can
-construct a **shadow manifold** that recovers the information of 
-the original state space.  This reconstruction is not a copy of 
-the original attractor, but it is a valid topological reconstruction of the
-original, a "shadow". 
+a time series of one of the state variables, say $X(t)$. 
+Because $Y(t)$ is missing, we are not able to construct a state
+space as we see above, but by using Takens theorem tells us that we
+can do a reconstruction of the state space that recovers the information of 
+the original state space. This **state space reconstruction**
+is the **embedding** of  a **shadow manifold** of the atractor. 
+This shadow manifold is a valid topological reconstruction of the
+attractor. 
 
 
-To do this, we 
-generate new variables by lagging the time series 
+To do a state space reconstruction we 
+create new variables by lagging the time series 
 by multiples of a time interval $\tau$. In this case we will use
 the interval between observations ($\tau=0.2$ time units).
 The R commands below create a data table object (which is called a
 *data frame* in R) with the original time series and its lagged
 version. The  handy function `make_block` by the rEDM authors does this
 job. Use this command to download the function code and load it in your 
-R workspace (it will be included in rEDM itself in future releases):
+R workspace (the function will be included in the rEDM package in future releases):
 
 ```{r load make_block, eval=TRUE, echo=FALSE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-And now you can create a lagged variable data frame with:
+And now you can create a data frame with the original and lagged 
+series of data:
 
 
 ```{r plot one time series alone}
@@ -138,24 +140,34 @@ tail(df1)
 
 By plotting the time series
 as a function of their lagged versions we get the
-shadow manifold, which is similar to the original one: 
+shadow manifold, which in is this bi-dimensional 
+case is easy to see:
 
 ```{r shadow manifold}
 plot(x_1 ~ x, data=df1, type="l",
      xlab = "X", ylab = "X(t + tau)" )
 ```
 
-There is a minimum number of dimensions to build
-a valid reconstruction of the original attractor.
+As expected, the shadow is similar to the attractor.
+In fact this similarity is well defined in topological
+terms. A key property of a valid shadow manifold 
+is that it is a one-to-one map of the attractor.
+
+But a shadow manifold will only be valid in this sense
+if it is embedded in the correct number of dimensions.
+There is an optimal number of dimensions to build
+a valid state space reconstruction, which we call
+**optimal embedding dimension**.
 In this simple case we obviously need two dimensions.
-Takens' Theorem guarantees that the number of dimensions
+Takens' Theorem gives us an upper limit - it 
+guarantees that the number of dimensions
 is up to 2D + 1, where D is the dimensionality of
-the attractor. Finding the optimal dimension for
-the shadow manifold is part of a vast topic called *Embedology*
-(Sauer *et al.* 1991). The package `rEDM` 
-has some methods to find
-the optimal dimensions of the manifold. 
-We will learn more in the following tutorials of this course.
+the attractor. Finding the optimal embedding 
+dimension is part of a vast topic called *Embedology*
+(Sauer *et al.* 1991), and the package `rEDM` 
+provide some methods to do this.
+We will learn more abou this in the following tutorials 
+of this course.
 
 
 # Noisy data
@@ -172,7 +184,8 @@ or have limited precision (inherent to all measurement).
 Observational errors do not affect the dynamics, only the portrait
 we make of it.
 
-In this section, we check how robust the attractor is to measurement error by adding simulated noise to the original time series.
+In this section, we check how robust the attractor is to measurement 
+error by adding simulated noise to the original time series.
 Use the commands below to
 simulate that the time series has independent measurement errors with constant variance.
 To do this, we add to each observation a value drawn from a Gaussian distribution with zero mean and
@@ -189,8 +202,8 @@ plot(x1[ind] ~ time1[ind], type="l", xlab = "Time", ylab = "X",
 lines(x2[ind] ~ time1[ind], type="l", col="red", lwd=2)
 ```
 
-We thus proceed by creating a new data frame with the lagged variables 
-and by plotting the new shadow manifold:
+We thus proceed by creating a new data frame with the 
+lagged variables with noise and by plotting the new shadow manifold:
 
 ```{r 2D plot noisy series}
 ## Data frame with lagged variables
@@ -209,7 +222,7 @@ original shape of the attractor, despite the noise caused by measurement errors.
 Measurement errors make attractors more complex by spreading
 points (and thus trajectories) over the state space. 
 Hence, the trajectories may cross in the shadow manifold,
-which breaks down the one-to-one  mapping to the original attractor.
+which breaks down the one-to-one mapping to the original attractor.
 Of course this effect gets larger as we increase the measurement
 error. We now will investigate a bit more how this affects
 the attractor reconstruction.
@@ -225,20 +238,18 @@ plot(x_1 ~ x, data=df3, type="l", col="grey", lwd=0.5,
 
 
 The attractor reconstruction looks worse now, but we can overcome this
-problem by adding more dimensions to the shadow manifold. 
+problem by adding more dimensions to the state space reconstruction. 
 By doing this we unfold the shadow manifold, by
 unfolding crossing trajectories.
 We do this adding more axes, that correspond to 
 the time series lagged by the further time steps 
-($t + \tau, \ t + 2\tau, \ t + 3\tau$...).
-Even the if the original manifold has a lower dimension it is valid to
-reconstruct the state space with more dimensions (Sauer *et al*. 1991).
+($t + \tau, \ t + 2\tau, \ t + 3\tau \dots$).
 
 
 You can check with the interactive plot below
-how an additional dimension unfolds a bit more the reconstructed
-attractor (it won't run on your computer without the `plotly` library).  In the following days we will learn some methods to find
-the optimal dimensions of the manifold. By now the take-home message
+how an additional dimension unfolds a bit more the shadow manifold. [^1]
+In the following days we will learn some methods to find
+the optimal dimension of the state space reconstruction. By now the take-home message
 is: the more **complex** the attractor, or the larger the **error** (observational or not), the more dimensions you
 will need to make a good reconstruction.
 
@@ -262,8 +273,7 @@ error but with a much smaller interval between observations
 ($\tau=0.01$ time units). 
 
 
-```{r smaller tau}
-## Generate the data at 0.01 time intervals
+```{r simulates oscillator series with smaller tau}
 time4<-seq(0, 500, by = 0.01) 
 x4<-sin(time4)
 y4<-cos(time4)
@@ -282,8 +292,8 @@ and how to solve them?
 
 ### Hints
 
-**1.** The command below adds a line $x(t) = x(t + tau)$ to the manifold, which
-can help you to understand the problem with small values of $\tau$:
+**1.** The command below adds a line $X(t) = X(t + tau)$ to the state space reconstruction, 
+which can help you to understand the problem with small values of $\tau$:
 
 ```{r abline, eval=FALSE}
 abline(0,1, col="red")
@@ -296,7 +306,8 @@ abline(0,1, col="red")
 
 In this exercise you have to
 reconstruct the state space of a time series in this, 
-checking if a three-dimensional manifold improve the reconstruction.
+checking if a three-dimensional plot
+improve the reconstruction.
 To load the data in R run the command:
 
 ```{r problem time series}
@@ -322,6 +333,7 @@ time series we examined above:
 ```{r 3D plot with scatterplot3d}
 ## Loads the package
 library(scatterplot3d)
+## 3D plot
 scatterplot3d(x = df2$x, y = df2$x_1, z = df2$x_2,
               type = "l", color="grey", lwd = 0.5,
               xlab = "x(t)", ylab = "x(t+tau)", zlab = "x(t + 2 tau)")
@@ -352,3 +364,8 @@ a video by Sugihara's Lab.
 * Sauer, T., Yorke, J.A. and Casdagli, M., 1991. Embedology. Journal
   of statistical Physics, 65(3), pp.579-616. 
 
+# Glossary
+```{r include glossary, child = '../glossary.md'}
+```
+
+[^1]: To run the R code that creates this plot in your computer you need the `plotly` package.
