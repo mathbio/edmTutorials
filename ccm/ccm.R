@@ -12,6 +12,9 @@ opts_chunk$set(fig.align = 'center',
                warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
+## ----call vignette, echo=TRUE, eval=FALSE--------------------------------
+## vignette("rEDM-tutorial", package="rEDM")
+
 ## ----generate data, echo=TRUE--------------------------------------------
 
 ## Two vectors to store data
@@ -33,10 +36,6 @@ par(cex=1.1,lwd=2)
   plot(20:50,X[20:50],type="b", pch=18, col="blue",ylim=c(min(X,Y),max(X,Y)),main='Two Species',xlab = 'time',ylab='Population')
   lines(20:50,Y[20:50],pch=19, col="red", type="b",lty=2,lwd=2)
   legend(x = "bottomright", legend = c("X", "Y"),lty=c(1,2),pch=c(18,19) ,col = c("blue", "red"), inset = 0.02,lwd=2)
-  # save data for future use
-  write.csv(XY, file = "data_unidirectional.csv",row.names=F)
-  
-  
 
 ## ----plot correlation----------------------------------------------------
 fit<-lm(Y ~ X)
@@ -48,13 +47,13 @@ legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0
 ## ----optimal embeddings X, echo=T----------------------------------------
 options(warn = -1)
 simplex_X<-simplex(X,silent=T)
-plot(simplex_X$rho,type='o')
+plot(simplex_X$rho,type='o', ylab = "Forecast Skill (rho)", xlab="Embedding Dimension (E)")
 E_star_X<-which.max(simplex_X$rho)
 print(paste('E*(X) =',E_star_X))
 
 ## ----optimal embeddings Y, echo=T----------------------------------------
 simplex_Y<-simplex(Y,silent=T)
-plot(simplex_Y$rho,type='o')
+plot(simplex_Y$rho,type='o', ylab = "Forecast Skill (rho)", xlab="Embedding Dimension (E)")
 E_star_Y<-which.max(simplex_Y$rho)
 print(paste('E*(Y) =',E_star_Y))
 
@@ -64,7 +63,7 @@ source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/
 
 ## ----make_block, echo=T--------------------------------------------------
 
-Shadow_MXY<-make_block(XY,max_lag = 2)
+Shadow_MXY<-make_block(XY,max_lag = 2) # max_lag is the optimal embedding dimension
 Shadow_MX<-Shadow_MXY[,2:3]
 Shadow_MY<-Shadow_MXY[,4:5]
 
@@ -74,6 +73,7 @@ head(Shadow_MXY)
 ## ----MX X_xmap_Y_code, echo=T--------------------------------------------
 
 predictor<-70
+print(Y[70])
 
 
 ## ----neighbors_X, echo=T-------------------------------------------------
@@ -110,8 +110,8 @@ head(pred_obs_Y)
 ## ----plot_obs_pred_MX_MY-------------------------------------------------
 fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
 plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
-plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
+plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed Y",
+ylab = "Predicted Y")
 abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_Y<-observed_all_Y[predictor-2]
@@ -153,8 +153,8 @@ head(pred_obs_X)
 ## ----plot_obs_pred_MY_MX-------------------------------------------------
 fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
-plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
+ylab = "Predicted X")
 abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
@@ -173,7 +173,7 @@ points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
   Y_xmap_X_means <- ccm_means(Y_xmap_X)
   
   #plot graphs
-  plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",main='Two Species', xlab = "Library Size", ylab = "Cross Map Skill (rho)", ylim = c(0,1))
+  plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",main='Two Species', xlab = "Library Size (L)", ylab = "Cross Map Skill (Pearson rho)", ylim = c(0,1))
   lines(Y_xmap_X_means$lib_size, pmax(0, Y_xmap_X_means$rho), col = "blue")
   legend(x = "topleft", legend = c("X_xmap_Y", "Y_xmap_X"), col = c("red", "blue"), cex=1.1,lwd=2, inset = 0.02)
   

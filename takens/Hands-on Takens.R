@@ -4,11 +4,18 @@ library(rEDM)
 library(dplyr)
 library(plotly)
 
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
+               fig.height = 5,
+               fig.width = 5, 
+               warning = FALSE, message = FALSE, error = FALSE, echo=TRUE)
+options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
+
 ## ----load rEDM, echo=TRUE------------------------------------------------
 library(rEDM)
 
 ## ----call vignette, eval=FALSE-------------------------------------------
-vignette("rEDM-tutorial", package="rEDM")
+## vignette("rEDM-tutorial", package="rEDM")
 
 ## ----generates data for the harmonic oscillator, echo=TRUE---------------
 ## Generate the data at tau = 0.2 time intervals
@@ -87,7 +94,7 @@ plot(x_1 ~ x, data=df4, type="l",
      xlab = "X", ylab = "X(t + tau)" )
 
 ## ----abline, eval=FALSE--------------------------------------------------
-abline(0,1, col="red")
+## abline(0,1, col="red")
 
 ## ----problem time series-------------------------------------------------
 prob2 <- read.csv("https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/problem-time-series.csv")
@@ -104,9 +111,9 @@ scatterplot3d(x = df2$x, y = df2$x_1, z = df2$x_2,
               xlab = "x(t)", ylab = "x(t+tau)", zlab = "x(t + 2 tau)")
 
 ## ----install packages, eval=FALSE----------------------------------------
-install.packages("scatterplot3d")
+## install.packages("scatterplot3d")
 
-
+## ----include glossary, child = '../glossary.md'--------------------------
 
 
 

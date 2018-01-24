@@ -4,8 +4,15 @@ library(plotly)
 library(rEDM)
 library(dplyr)
 
+
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
+               fig.height = 5,
+               warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
+options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
+
 ## ----call vignette, echo=TRUE, eval=FALSE--------------------------------
-vignette("rEDM-tutorial", package="rEDM")
+## vignette("rEDM-tutorial", package="rEDM")
 
 ## ----generate data, echo=TRUE--------------------------------------------
 ## Two vectors to store data
@@ -212,7 +219,7 @@ plot(nich97I$total, type="b", xlab="Time (days)", ylab="Total number of flies")
 ## ----nicholson data diff, echo = TRUE------------------------------------
 X4 <- diff(nich97I$total)
 
-
+## ----include glossary, child = '../glossary.md'--------------------------
 
 
 
