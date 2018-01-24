@@ -31,9 +31,16 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 This tutorial presents the general idea of Convergent Cross Mapping (CCM, Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly we propose a real data analysis as exercise.
 For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
 
+Before you proceed,
+make sure you have read the introduction and the first section (*"Empirical Dynamic Modelling"*) of the
+rEDM's tutorial which you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
+or in your local R installation with the command
+
 # Convergent Cross Mapping: From Chaos to Chaos-ality
 
-## General idea?
+## General idea [^1]
+
+One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same system. Consider two variables, x and y, that interact in a dynamic system. Then the univariate reconstructions based on x alone should uniquely identify the system state and and thus the corresponding value of y, and vice-versa.
 
 ## Syntetic Data
 
@@ -84,7 +91,7 @@ legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0
 X and Y are not correlated, even though the data comes from a model with causality (*i.e.* X is causing changes in Y). 
 This is a clear example that "lack of correlation does not imply lack of causation".
 
-## Cross Mapping[^1]
+## Cross Mapping[^2]
 
 How can we then extract the causality of X in Y from the coupled dynamics (time series)?
 As we have seen in previous sections, a generic property of lagged-coordinate embedding is that states of X(t) on the lagged reconstruction map (Mx) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on Mx map to local neighborhoods on M. 
@@ -326,4 +333,6 @@ Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
 * ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
 
 
-[^1]: This section is adapted from: Sugihara et al., Detecting Causality in Complex Ecosystems (Supplementary Materials), Science, 2012.
+[^1]: Taken from [rEDM vignette(https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) section (*"Causality Inference and Cross Mapping"*) 
+
+[^2]: This section is adapted from: Sugihara et al., Detecting Causality in Complex Ecosystems (Supplementary Materials), Science, 2012.
