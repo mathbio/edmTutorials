@@ -121,7 +121,7 @@ print(paste('E*(Y) =',E_star_Y))
 
 ```
 
-The optimal embedding dimensions for X and Y are equal to 2.
+The optimal embedding (E*) dimensions for X and Y are equal to two. 
 
 ## Constructing the manifolds Mx and My
 
@@ -131,7 +131,7 @@ Now that we have the optimal embeddings, we can construct the shadow manifolds M
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Now let's create the shadow manifold for both X and Y:
+Now let's create the shadow manifold for both X and Y. Since E* = 2, we will use two dimensions to construct the shadow manifolds Mx and My. This means that Mx will be build based on X(t) and X(t+1), similarly My is created from Y(t) and Y(t+1).
 
 ```{r make_block, echo=T}
 
@@ -160,7 +160,7 @@ print(Y[70])
 
 ```
 
-We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three **[WHY THREE?]** nearest neighbours within the Mx:
+We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three nearest neighbours within the Mx. It is important to notice that the number of neighbours is based on the optimal embedding (E*+1 = 3). 
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -209,7 +209,7 @@ head(pred_obs_Y)
 ```
 
 This is better visualized in the plot below.
-The red dot represents the predictor used in the example above.
+The red dot represents the predictor (t=70) used in the example above.
 
 ```{r plot_obs_pred_MX_MY}
 fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
@@ -231,7 +231,7 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 
 Similarly to the previous mapping, we can now do the opposite: use Y to predict values of X. 
 We obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
-However, since we are cross-mapping from My to Mx, the simplex_My is generate in shadow maninfold My.
+Since we are now cross mapping from My to Mx, the simplex_My is generated directly from the shadow manifold My.
 
 ```{r neighbors_y, echo=T}
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
