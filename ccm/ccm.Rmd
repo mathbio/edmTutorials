@@ -77,10 +77,6 @@ par(cex=1.1,lwd=2)
   plot(20:50,X[20:50],type="b", pch=18, col="blue",ylim=c(min(X,Y),max(X,Y)),main='Two Species',xlab = 'time',ylab='Population')
   lines(20:50,Y[20:50],pch=19, col="red", type="b",lty=2,lwd=2)
   legend(x = "bottomright", legend = c("X", "Y"),lty=c(1,2),pch=c(18,19) ,col = c("blue", "red"), inset = 0.02,lwd=2)
-  # save data for future use
-  write.csv(XY, file = "data_unidirectional.csv",row.names=F)
-  
-  
 ```
 
 X and Y do not seem to be related, although we know that X and Y are coupled (it's a syntetic data!).
