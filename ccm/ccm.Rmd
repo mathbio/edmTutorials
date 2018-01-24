@@ -40,7 +40,7 @@ or in your local R installation with the command
 
 ## General idea [^1]
 
-One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same dynamical system. Consider two variables, x and y, that interact in a dynamic system. Then the univariate reconstructions based on x alone should uniquely identify the system state and thus the corresponding value of y, (and vice versa).
+One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same dynamical system. Consider two variables, X and Y, that interact in a dynamic system. Then the univariate reconstructions based on X alone should uniquely identify the system state and thus the corresponding value of Y, (and vice versa).
 
 ## Syntetic Data
 
@@ -94,13 +94,13 @@ This is a clear example that "lack of correlation does not imply lack of causati
 ## Cross Mapping[^2]
 
 How can we then extract the causality of X in Y from their dynamics (time-series)?
-As we have seen in previous sections, a generic property of lagged-coordinate embedding is that the states of X(t) on the lagged reconstruction map (Mx) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on Mx map to local neighborhoods on M. 
+As we have seen in previous sections, a generic property of lagged-coordinate embedding is that the states of X(t) on the lagged reconstruction map ($M_X$) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on $M_X$ map to local neighborhoods on M. 
 
-It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their lagged reconstructions (Mx and My, respectively) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
+It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their lagged reconstructions ($M_X$ and My, respectively) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
 
-*Convergent* cross mapping determines how well local neighborhoods on Mx correspond to local neighborhoods on My and vice versa. 
-To do so, a manifold Mx is constructed from lags of the variable X and used to estimate **contemporaneous [Marina: you mean simultaneous in time?]** states of Y. 
-Similarly, a manifold My is constructed from lags of variable Y and used to estimate **contemporaneous** states of X.
+*Convergent* cross mapping determines how well local neighborhoods on $M_X$ correspond to local neighborhoods on$M_y$and vice versa. 
+To do so, a manifold $M_X$ is constructed from lags of the variable X and used to estimate **contemporaneous [Marina: you mean simultaneous in time?]** states of Y. 
+Similarly, a manifold$M_y$is constructed from lags of variable Y and used to estimate **contemporaneous** states of X.
 
 To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function **(see tutorial XXX if you have doubts about optimal embedding)**.
 
@@ -123,15 +123,15 @@ print(paste('E*(Y) =',E_star_Y))
 
 The optimal embedding (E*) dimensions for X and Y are equal to two. 
 
-## Constructing the manifolds Mx and My
+## Constructing the manifolds $M_X$ and My
 
-Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
+Now that we have the optimal embeddings, we can construct the shadow manifolds $M_X$ and $M_Y$ using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
 
 ```{r load make_block, eval=TRUE, echo=FALSE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Now let's create the shadow manifold for both X and Y. Since E* = 2, we will use two dimensions to construct the shadow manifolds Mx and My. This means that Mx will be build based on X(t) and X(t+1), similarly My is created from Y(t) and Y(t+1).
+Now let's create the shadow manifold for both X and Y. Since E* = 2, we will use two dimensions to construct the shadow manifolds $M_X$ and My. This means that $M_X$ will be build based on X(t) and X(t+1), similarly $M_Y$ is created from Y(t) and Y(t+1).
 
 ```{r make_block, echo=T}
 
@@ -144,9 +144,9 @@ head(Shadow_MXY)
 ```
 
 
-The table above shows the X and Y time series and their respective lags X_1 and Y_1. The manifold Mx is thus composed of X and X_1, and My of Y and Y_1. 
+The table above shows the X and Y time series and their respective lags X_1 and Y_1. The manifold $M_X$ is thus composed of X and X_1, and $M_Y$ of Y and Y_1. 
 
-## Cross-mapping from Mx to My (X_xmap_Y)
+## Cross-mapping from $M_X$ to $M_Y$ (X_xmap_Y)
 
 To better understand the cross mapping, lets start by using X to predict one single value in Y. Here, we are using the term "prediction", but instead of predicting future values of X (as in the simplex tutorial **LINK**), we will predict values of Y(t) using X(t) and vice versa. 
 This "cross-prediction" is performed between different variables but for the same point in time.
@@ -160,7 +160,7 @@ print(Y[70])
 
 ```
 
-We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the E*+1 (2+1= 3) nearest neighbours within the Mx. 
+We are going to use the nearest neighbours of x(70) within the manifold $M_X$ to predict y(70). To do this, we first create a matrix of distances among the states of $M_X$ and then we select the E*+1 (2+1= 3) nearest neighbours within the $M_X$. 
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -169,7 +169,7 @@ neigh_X_print<-c(neigb_X)
 print(paste('simplex_Mx:',list(neigh_X_print)))
 ```
 
-We can also plot Mx with the predictor (red dot) and the respective neighbours simplex_Mx (blue dots):
+We can also plot $M_X$ with the predictor (red dot) and the respective neighbours simplex_Mx (blue dots):
 
 ```{r MX X_xmap_Y, echo=FALSE, fig.align='center'}
 p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
@@ -180,7 +180,7 @@ p_MX_X_to_Y
 ```
 
 The cross-mapping process starts by finding (mapping) the simplex_Mx into My, creating the simplex_My. Note that simplex_My has the same indexes as simplex_Mx.
-The figure below shows My and simplex_My (green dots).
+The figure below shows $M_Y$ and simplex_My (green dots).
 
 ```{r MY_X_xmap_Y}
 p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
@@ -227,12 +227,12 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 
 
 
-## Cross-mapping from My to Mx (Y_xmap_X)
+## Cross-mapping from $M_Y$ to $M_X$ (Y_xmap_X)
 
 Similarly to the previous mapping, we can now do the opposite: use Y to predict values of X. 
 We obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
-Since we are now cross mapping from My to Mx, the simplex_My is generated directly from the shadow manifold My. 
-Again, we first create a matrix of distances among the states of My and then we select the E*+1 nearest neighbors. 
+Since we are now cross mapping from $M_Y$ to $M_X$, the simplex_My is generated directly from the shadow manifold My. 
+Again, we first create a matrix of distances among the states of $M_Y$ and then we select the E*+1 nearest neighbors. 
 
 ```{r neighbors_y, echo=T}
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
@@ -241,7 +241,7 @@ neigh_Y_print<-c(neigb_Y)
 print(paste('simplex_My:',list(neigh_Y_print)))
 ```
 
-The following plot presents My with the predictor (red dot) and respective simplex_My (blue dots).
+The following plot presents $M_Y$ with the predictor (red dot) and respective simplex_My (blue dots).
 ```{r MY Y_xmap_X, echo=FALSE, fig.align='center'}
 p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y(t-1)'),title='My') %>%
@@ -250,9 +250,9 @@ p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opaci
 p_MY_Y_to_X
 ```
 
-Next, we map the simplex_My in Mx, creating the simplex_Mx.
+Next, we map the simplex_My in $M_X$, creating the simplex_Mx.
 Analogously, simplex_Mx has the same indexes as simplex_My.
-The figure below shows Mx and simplex_Mx (green dots).
+The figure below shows $M_X$ and simplex_Mx (green dots).
 
 ```{r MX_Y_xmap_X}
 p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
@@ -263,7 +263,7 @@ p_MX_Y_to_X
 
 ```
 
-The simplex_Mx will then be used to estimate the contemporaneous value of the predictor in Mx, obtaining the predicted value X(tilda). 
+The simplex_Mx will then be used to estimate the contemporaneous value of the predictor in $M_X$, obtaining the predicted value X(tilda). 
 
 ```{r estimating X from Y (Y_xmap_X), echo=T}
 lib<-lib <- c(1, NROW(Shadow_MXY))
@@ -301,7 +301,7 @@ Note that the Pearson correlation of Y_xmap_X (r = 0.68) is different than the X
 The Pearson correlation of Y_xmap_X is different than the X_xmap_Y. When we used Y to estimate (map) X we obtained good predictions (r = 0.68). However, when we used X to estimate (map) Y, the correlation between estimate and observed was quite low (r = -0.08).
 This means that there is information about X dynamics inside the Y dynamics, therefore we can use Y to estimate X. Hence, if there is information of X within Y, this means that X somehow influences and causes Y. 
 Indeed, since all our data is synthetic, we know this is true: we created the variable X independently of Y, and X was causing changes in Y. 
-So when X causes Y, the cross mapping skill from My to Mx (Y_xmap_X) will generally gives us good results (high correlations), but *not* X_xmap_Y. 
+So when X causes Y, the cross mapping skill from $M_Y$ to $M_X$ (Y_xmap_X) will generally gives us good results (high correlations), but *not* X_xmap_Y. 
 It is *very* important to notice that there is an inverse relation between cross mapping and causality: if X causes Y (X --> Y), Y cross map of X (Y_xmap_X) shows positive correlation.
 
 ## Convergent Cross Mapping (CCM)
