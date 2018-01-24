@@ -477,12 +477,10 @@ Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
 * ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
 
 # Glossary
+```{r include glossary, child = '../glossary.md'}
+```
 
-*State-space reconstruction* its the process to reconstruct a state-space of interest or the lagged coordinate plot of a time series, which do the task to reconstruct the original State-space
 
-*Shadow Manifold* It is the projection of the original manifold into a euclidian space, or the embedding of it, this ensures a 1:1 map to the original.
-
-*Embedding* is a representation of a topological object, in a certain space, in such a way its properties are preserved.
 
 [^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
 
