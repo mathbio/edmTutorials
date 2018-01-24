@@ -345,7 +345,7 @@ Convergence means that the estimates from the cross-mapping improve with increas
   
 ```
 
-This means that the more data you have (the larger the L), the more trajectories you have to define the attractor, resulting thus in closer nearest neighbors and less estimation error (*i.e.* a higher correlation coefficient between estimated and observed). The convergence of the cross mapping (CCM) is then a necessary condition for causation. **[MARINA: this last sentence need further explanation of why]**
+This means that the more data you have (*i.e.* the larger the L), the more trajectories you have to define the attractor, resulting thus in closer nearest neighbors and less estimation error (*i.e.* a higher correlation coefficient between estimated and observed). That is, if there is causation, we expect to see the convergence of the cross mapping (CCM).
 
 
 # Exercises
