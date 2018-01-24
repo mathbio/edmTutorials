@@ -264,7 +264,7 @@ plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
                       zaxis = list(title = 'X (t + 2tau)')))
 ```
 
-# Problems
+# Exercises
 
 ## What is the effect of $\tau$ ?
 
