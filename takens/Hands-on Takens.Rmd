@@ -116,7 +116,7 @@ version. The  handy function `make_block` by the rEDM authors does this
 job. Use this command to download the function code and load it in your 
 R workspace (the function will be included in the rEDM package in future releases):
 
-```{r load make_block, eval=TRUE, echo=FALSE}
+```{r load make_block, eval=TRUE, echo=TRUE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
