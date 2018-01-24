@@ -98,14 +98,19 @@ p_MY_X_to_Y
 
 
 ## ----estimating Y from X (X_xmap_Y), echo=T------------------------------
-lib<-lib <- c(1, NROW(Shadow_MXY))
+lib <- c(1, NROW(Shadow_MXY))
 block_lnlp_output_XY <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
  "X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
 observed_all_Y <- block_lnlp_output_XY$model_output[[1]]$obs
 predicted_all_Y <- block_lnlp_output_XY$model_output[[1]]$pred
-pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y))
+pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y)) #
 colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
 head(pred_obs_Y)
+
+## ----predicted y, echo=T-------------------------------------------------
+
+pred_obs_Y[(predictor-2),]
+
 
 ## ----plot_obs_pred_MX_MY-------------------------------------------------
 fit_YX<-lm(predicted_all_Y ~ observed_all_Y)

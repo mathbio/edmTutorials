@@ -207,16 +207,7 @@ p_MY_X_to_Y
 ```
 
 The simplex_My will then be used to estimate the value of $y(t=70)$ in $M_Y$, obtaining the predicted value $\tilde{Y}$. 
-
-```{r predicted y, echo=T}
-
-pred_obs_Y[(predictor-2),]
-
-```
-
-Note that the index of the predicted point is off by two. That's because the first $E^* = 2$ points cannot be predicted, so the prediction of $y(t=70)$ corresponds to the value at index 68 of the table.
-
-Now we can expand the idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If we then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the real *observed* states of Y. We can then compare the predicted and observed:
+Expanding this idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If we then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the real *observed* states of Y. We can then compare the predicted and observed:
 
 ```{r estimating Y from X (X_xmap_Y), echo=T}
 lib <- c(1, NROW(Shadow_MXY))
@@ -228,6 +219,15 @@ pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y)) #
 colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
 head(pred_obs_Y)
 ```
+
+For the case of $y(t=70)$ we saw above, we find:
+```{r predicted y, echo=T}
+
+pred_obs_Y[(predictor-2),]
+
+```
+
+Note that the index of the predicted point is off by two. That's because the first $E^* = 2$ points cannot be predicted, so the prediction of $y(t=70)$ corresponds to the value at index 68 of the table.
 
 Below is the plot for all predictions of Y (mapped from X: X_xmap_Y) against the real observations, plus the Pearson's correlation coefficient.
 The red dot represents the predictor (t=70) used in the example above.
