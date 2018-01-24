@@ -148,18 +148,20 @@ The table above shows the X and Y time series and their respective lags X_1 and 
 
 ## Cross-mapping from Mx to My (X_xmap_Y)
 
-To better understand the cross-mapping, lets start by performing one single prediction using the index of a single predictor.
+To better understand the cross mapping, lets start by using X to predict one single value in Y. Here, we are using the term "prediction", but instead of predicting future values of X (as in the simplex tutorial **LINK**), we will predict values of Y(t) using X(t) and vice versa. 
+This "cross-prediction" is performed between different variables but for the same point in time.
+
+Suppose we want to predict the value y(t=70), using the index of a single predictor:
 
 ```{r MX X_xmap_Y_code, echo=T}
 
 predictor<-70
+print(Y[70])
 
 ```
+[Marina working]
 
-Here, we are using the therm "prediction", but instead of predicting future values of X, we will "predict values of Y(t) using X(t) and vice versa.
-This "cross-prediction" is performed between different variables but for the same point in time.
-
-Next, we obtain the indexes of the E*+1 nearest neighbors from the given predictor generating the simplex_Mx.
+We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three **[[WHY THREE?]]** nearest neighbours within the Mx:
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -168,7 +170,8 @@ neigh_X_print<-c(neigb_X)
 print(paste('simplex_Mx:',list(neigh_X_print)))
 ```
 
-The following plot presents Mx with the predictor (red dot) and respective simplex_Mx (blue dots).
+We can also plot Mx with the predictor (red dot) and the respective neighbours simplex_Mx (blue dots):
+
 ```{r MX X_xmap_Y, echo=FALSE, fig.align='center'}
 p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X(t-1)'),title='Mx') %>%
@@ -177,9 +180,9 @@ p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opaci
 p_MX_X_to_Y
 ```
 
-The cross-mapping process starts by finding (mapping) the simplex_Mx in My, creating the simplex_My.
-Note that simplex_My has the same indexes as simplex_Mx.
+The cross-mapping process starts by finding (mapping) the simplex_Mx into My, creating the simplex_My. Note that simplex_My has the same indexes as simplex_Mx.
 The figure below shows My and simplex_My (green dots).
+
 ```{r MY_X_xmap_Y}
 p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y (t-1)'),title='My') %>%
@@ -188,7 +191,13 @@ p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opaci
 p_MY_X_to_Y
 
 ```
-The simplex(My) will then be used to estimate the contemporaneous value of the predictor in My, obtaining the predicted value Y(tilda). 
+
+The simplex_My will then be used to estimate the contemporaneous value of the predictor y(70) in My, obtaining the predicted value Y(tilda). 
+**[MARINA: nao rola colocar um plot aqui que nem o do simplex, tipo com a estimativa de y(70) e o valor real? Pq o proximo passo abaixo ja eh expandir isso para todo o Y. Ou pelo menos so o valor do predicted y(70) e observed y(70)]**
+
+
+Now we can expand the idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the *real* observed states of Y. We can then compare the predicted and observed:
+
 ```{r estimating Y from X (X_xmap_Y), echo=T}
 lib<-lib <- c(1, NROW(Shadow_MXY))
 block_lnlp_output_XY <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
@@ -200,8 +209,7 @@ colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
 head(pred_obs_Y)
 ```
 
-Taking every prediction in the series will provides us with many comparisons between predicted and observed.
-This is better vizualized in the plot below.
+This is better visualized in the plot below.
 The red dot represents the predictor used in the example above.
 
 ```{r plot_obs_pred_MX_MY}
