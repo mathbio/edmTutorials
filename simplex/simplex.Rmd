@@ -80,18 +80,17 @@ plot(X, xlab="Time", ylab="X", type="b", lty=3)
 Surprisingly, it is possible to recover the rules that govern a dynamical system using the time series (*i.e.* sequence of observations) of a single variable of the system. 
 The Taken's Theorem provides a simple way to recover the properties of a dynamical 
 system by building a lagged coordinate plot. 
-Below you can see such a plot for the X variable, where each axis is the lagged X time series itself, *i.e.* X(t), X(t+1), X(t+2).
+Below you can see such a plot for the X variable, where each axis is the lagged X time series itself, *i.e.* $X(t), X(t+1), X(t+2)$.
 Each point in this 3-D plot depicts the state of the system at a given time *t* and in the next two time steps (*t+1* and *t+2*). 
 If you play with the plot turning it around, you can see that the points form a clear pattern. This pattern means
 that the possible states of the system are 
 constrained to a certain subset of the plotting space, 
 with a well defined shape. 
 
-We call the plot space an *embedding*
-and the shape it reveals is called a *shadow manifold* of the true attractor of the dynamical system.
+We call the plot space, the *state-space reconstruction* (SSR), and the shape it reveals is called a *shadow manifold*, which is an *embedding* of the true attractor of the dynamical system.
 For now, let's assume that the embedding depicted below
 satisfies the Taken's Theorem [^2], and thus nearby points
-in the embedding space correspond to similar system states.
+in the SSR corresponds to similar system states.
 
 Suppose we want to predict the last point of the time series (t = `r length(X)`).
 The blue point in the 3-D lagged plot below is X(t-3, t-2, t-1), which is the state 
@@ -101,7 +100,7 @@ point are depicted in red, green, orange, and magenta, respectively.
 If you zoom into the points, you will see segments linking each neighbor
 to the focal point we want to predict. The length of these
 segments are Euclidian distances. 
-You can also pan and rotate the manifold plot to get a better idea of
+You can also pan and rotate the cloud of points to get a better idea of
 the spatial pattern of these points.
 
 
@@ -135,7 +134,7 @@ p3
 
 ```
 
-It is important to notice that the neighboring points in the manifold plot (above) correspond to the states of the system most similar to the focal state we want to predict. Below you can see each of these states in the time series, represented by the same code color used in the manifold plot above. 
+It is important to notice that the neighboring points in the manifold (above) correspond to the states of the system most similar to the focal state we want to predict. Below you can see each of these states in the time series, represented by the same code color used in the manifold above. 
 
 
 ```{r time series with neighbors highlighted}
@@ -303,9 +302,8 @@ plot(pred ~ obs, data = predE2$model_output[[3]],
 par(mfrow=c(1,1))
 ```
 
-Embeddings with too few or too many dimensions do not unfold 
-the shadow manifold properly and thus worsen the forecast.
-To find out the optimal embedding dimension, we can plot the forecast skill (correlation) against the embedding dimension. The optimal number of dimensions for our the current case is three (as we guessed
+Embeddings with too few or too many dimensions do not unravels the original manifold into a shadow manifold properly and thus worsen the forecast, above the cases of using $E=2$ or $E=10$. 
+To find out the optimal embedding dimension, we can plot the forecast skill (correlation between predicted and observed) against the embedding dimension. The optimal number of dimensions for our current case is three (as we guessed
 in the previous section):
 
 
@@ -478,6 +476,13 @@ Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
 * Anderson C. & Sugihara G. Simplex projection - Order out the chaos. http://deepeco.ucsd.edu/simplex/
 * ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
 
+# Glossary
+
+*State-space reconstruction* its the process to reconstruct a state-space of interest or the lagged coordinate plot of a time series, which do the task to reconstruct the original State-space
+
+*Shadow Manifold* It is the projection of the original manifold into a euclidian space, or the embedding of it, this ensures a 1:1 map to the original.
+
+*Embedding* is a representation of a topological object, in a certain space, in such a way its properties are preserved.
 
 [^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
 
