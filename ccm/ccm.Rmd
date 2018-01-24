@@ -88,7 +88,7 @@ This is a clear example that "lack of correlation does not imply lack of causati
 
 How can we then extract this causality from the coupled dynamics?
 As we have seen in previous sections, a generic property of lagged-coordinate embedding is that points of X(t) on the Mx map maps one-to-one to points m(t) on M and local neighborhoods on Mx map to local neighborhoods on M. 
-**MARINA: DEFINE M, m(t)! And be consistent regarding 'MX' and 'Mx'**
+**MARINA: DEFINE M, m(t), and be consistent regarding 'MX' and 'Mx'**
 
 It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions, Mx and My, will map to each other since X and Y are essentially alternative observations of the common attractor manifold M.
 
@@ -118,7 +118,7 @@ print(paste('E*(Y) =',E_star_Y))
 ```
 
 ## Cross-mapping from Mx to My (X_xmap_Y)
-Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from rEDM package. Use this command to download the function code and load it in your
+Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from the rEDM package. Use this command to download the function code and load it into your
 R workspace (it will be included in rEDM itself in future releases):
 
 ```{r load make_block, eval=TRUE, echo=FALSE}
