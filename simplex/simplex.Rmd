@@ -37,7 +37,7 @@ You will need the most recent version of [R](https://cran.r-project.org/)
 and the `rEDM` package installed in your working computer.
 
 After running this tutorial, you can review the concepts of
-forecatsing and learn details about the rEDM library in the introductory
+forecasting and learn details about the rEDM library in the introductory
 documentation of the package (*vignette*) which you can find 
 [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command

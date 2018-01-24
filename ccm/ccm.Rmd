@@ -31,12 +31,18 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 This tutorial presents the general idea of Convergent Cross Mapping (CCM, Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly we propose a real data analysis as exercise.
 For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
 
-Before you proceed,
-make sure you have read the introduction and the first section (*"Empirical Dynamic Modelling"*) of the
-rEDM's tutorial which you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
+After running this tutorial, you can review the concepts of
+cross-mapping  and learn details about the rEDM library in the introductory
+documentation of the package (*vignette*) which you can find 
+[here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
 or in your local R installation with the command
 
-# Convergent Cross Mapping: From Chaos to Chaos-ality
+
+```{r call vignette, echo=TRUE, eval=FALSE}
+vignette("rEDM-tutorial", package="rEDM")
+```
+
+# From Chaos to Chaos-ality
 
 ## General idea [^1]
 
@@ -93,16 +99,29 @@ This is a clear example that "lack of correlation does not imply lack of causati
 
 ## Cross Mapping[^2]
 
-How can we then extract the causality of X in Y from their dynamics (time-series)?
-As we have seen in previous sections, a generic property of lagged-coordinate embedding is that the states of X(t) on the lagged reconstruction map ($M_X$) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on $M_X$ map to local neighborhoods on M. 
+How can we then extract the causality of $X$ in $Y$ from their dynamics?
+As we have seen in previous sections, a generic property of the
+reconstructed shadow manifold is that the states of $X(t)$ on the
+shadow manifold ($M_X$) maps one-to-one to states on the original
+attractor manifold $M$, and local neighborhoods on $M_X$ map to local
+neighborhoods on $M$. 
 
-It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their lagged reconstructions ($M_X$ and My, respectively) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
+It follows that for two variables $X$ and $Y$ that are dynamically
+coupled, local neighborhoods on their lagged reconstructions ($M_X$
+and $M_Y$, respectively) will map to each other since $X$ and $Y$ are
+essentially alternative observations of the common original attractor
+manifold $M$. 
 
-*Convergent* cross mapping determines how well local neighborhoods on $M_X$ correspond to local neighborhoods on$M_y$and vice versa. 
-To do so, a manifold $M_X$ is constructed from lags of the variable X and used to estimate **contemporaneous [Marina: you mean simultaneous in time?]** states of Y. 
-Similarly, a manifold$M_y$is constructed from lags of variable Y and used to estimate **contemporaneous** states of X.
+**Convergent cross mapping** (CCM)  determines how well local
+neighborhoods on $M_X$ correspond to local neighborhoods on $M_y$ and
+vice versa. To do so, a manifold $M_X$ is constructed from lags of the
+variable $X$ and used to estimate the states of $Y$ at the same time points. 
+Similarly, a manifold $M_y$ is constructed from lags of variable $Y$ and
+used to estimate the states of $X$ at the same times. 
 
-To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function **(see tutorial XXX if you have doubts about optimal embedding)**.
+To do so, we first need to obtain the optimal embedding dimension for
+both variables using the simplex function (see the tutorial about
+[simplex projection](simplex.html) for details).
 
 
 ```{r optimal embeddings X, echo=T}
