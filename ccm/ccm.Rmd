@@ -28,16 +28,17 @@ opts_chunk$set(fig.align = 'center',
 options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
-This tutorial starts by presenting the general idea of Convergent Cross Mapping (Ye *et al.* 2017), next it shows some applied examples using syntetic data.
-In the last section a real data analysis is proposed as an exercise.
+This tutorial presents the general idea of Convergent Cross Mapping (CCM, Ye *et al.* 2017), then it shows some practical examples using syntetic data, and lastly we propose a real data analysis as exercise.
 For these activities, you will need the most recent version of [R](https://cran.r-project.org/) and the rEDM package installed in your working computer.
 
 # Convergent Cross Mapping: From Chaos to Chaos-ality
 
+## General idea?
+
 ## Syntetic Data
 
-First, We will need to simulate a deterministic discrete-time dynamics with chaotic behavior.
-To create a time series from this dynamics with 150 time steps run the commands below in the R console:
+First, we simulate a deterministic discrete-time dynamics with chaotic behavior.
+To create a 150-step time series following this dynamics, run the commands below in the R console:
 
 ```{r generate data, echo=TRUE}
 
@@ -55,10 +56,9 @@ for(i in 2:150){
 XY<-as.data.frame(cbind(X,Y))
   
 ```
-
-Here we have the time series of two coupled species in a chaotic regime.
-In this first example the variable X is causing changes in Y.
-However, populations do not seem to be related.
+Note that the variable X is causing changes in Y. 
+However, if we plot the time series of these two coupled variables under the chaotic regime, their populations do not seem to be related.
+Below you can plot the X and Y time series.
 
 ```{r plot 1st time series}
 par(cex=1.1,lwd=2)
@@ -71,7 +71,8 @@ par(cex=1.1,lwd=2)
   
 ```
 
-The correlation coeficient between X and Y is shown in the figure below.
+Moreover, the correlation coeficient between X and Y is shown in the figure below.
+
 ```{r plot correlation}
 fit<-lm(Y ~ X)
 plot(X,Y,main='Correlation (X,Y)')
@@ -80,8 +81,8 @@ legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0
 
 ```
 
-Although the data comes from a model with causality, X and Y are not correlated. 
-This is a clear example that "Lack of correlation does not imply lack of causation".
+X and Y are not correlated, even though the data comes from a model with causality (*i.e.* X is causing changes in Y). 
+This is a clear example that "lack of correlation does not imply lack of causation".
 
 ## Cross Mapping[^1]
 
