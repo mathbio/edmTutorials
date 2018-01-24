@@ -1,7 +1,7 @@
 ---
 title: "Simplex projection made simple"
-subtitle: "Short Course 'An Introduction to Empirical Dynamics Modelling, ICTP SAIFR', Tutorial #2"
-author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Rafael Lopes, Roberto Kraenkel"
+subtitle: "Tutorial 2 of the Short Course 'An Introduction to Empirical Dynamics Modelling', ICTP SAIFR"
+author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
 date: "ICTP SAIFR São Paulo School on Physics Applications in Biology, January 2018"
 output:
          rmdformats::readthedown:
