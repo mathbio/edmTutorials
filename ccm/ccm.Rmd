@@ -86,15 +86,18 @@ This is a clear example that "lack of correlation does not imply lack of causati
 
 ## Cross Mapping[^1]
 
-How can we extract this causality from the coupled dynamics?
-As we have seen in a previous section, a generic property of lagged-coordinate embedding is that points x(t) on MX map 1:1 to points m(t) on M and local neighborhoods on Mx map to local neighborhoods on M. 
+How can we then extract this causality from the coupled dynamics?
+As we have seen in previous sections, a generic property of lagged-coordinate embedding is that points of X(t) on the Mx map maps one-to-one to points m(t) on M and local neighborhoods on Mx map to local neighborhoods on M. 
+**MARINA: DEFINE M, m(t)! And be consistent regarding 'MX' and 'Mx'**
 
-It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions, MX and MY, will map to each other since X and Y are essentially alternative observations of the common attractor manifold M.
+It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions, Mx and My, will map to each other since X and Y are essentially alternative observations of the common attractor manifold M.
 
 Convergent cross mapping determines how well local neighborhoods on Mx
 correspond to local neighborhoods on My and vice versa. 
 To do so, a manifold Mx is constructed from lags of variable X and used to estimate contemporaneous values of Y. 
 Similarly, a manifold My is constructed from lags of variable Y and used to estimate contemporaneous values of X.
+**MARINA: what do you mean by contemporaneous?**
+
 
 To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function.
 
