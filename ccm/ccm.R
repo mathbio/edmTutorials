@@ -58,7 +58,7 @@ E_star_Y<-which.max(simplex_Y$rho)
 print(paste('E*(Y) =',E_star_Y))
 
 
-## ----load make_block, eval=TRUE, echo=FALSE------------------------------
+## ----load make_block, eval=TRUE, echo=TRUE-------------------------------
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 
 ## ----make_block, echo=T--------------------------------------------------

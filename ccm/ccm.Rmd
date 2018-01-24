@@ -142,7 +142,7 @@ print(paste('E*(Y) =',E_star_Y))
 
 Now that we have the optimal embeddings, we can construct the shadow manifolds $M_X$ and $M_Y$ using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
 
-```{r load make_block, eval=TRUE, echo=FALSE}
+```{r load make_block, eval=TRUE, echo=TRUE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
