@@ -4,8 +4,15 @@ library(plotly)
 library(rEDM)
 library(dplyr)
 
+
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
+               fig.height = 5,
+               warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
+options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
+
 ## ----call vignette, echo=TRUE, eval=FALSE--------------------------------
-vignette("rEDM-tutorial", package="rEDM")
+## vignette("rEDM-tutorial", package="rEDM")
 
 ## ----generate data, echo=TRUE--------------------------------------------
 ## Two vectors to store data
@@ -22,16 +29,18 @@ for(i in 3:150){
     Y[i] <- 3.78*Y[i-1] - 3.78*Y[i-1]^2
 }
 
-## ----plot 1st time series------------------------------------------------
+## ----plot 1st time series, echo=TRUE-------------------------------------
 plot(X, xlab="Time", ylab="X", type="b", lty=3)
 
-## ----shadow manifold-----------------------------------------------------
+## ----shadow manifold, echo=TRUE------------------------------------------
 ## Data frame with X at t0, t1 and t2
 df1 <- data.frame(X.t0=X[1:(length(X)-2)],X.t1=X[2:(length(X)-1)],  X.t2=X[3:(length(X))])
 ## point to point Euclidian distance matrix
 dist.m1 <- as.matrix(dist(df1[,1:3], upper=TRUE))
 ## Indexes of the 4 nearest neighbors of the last point in the time series
 neigb1 <- order(dist.m1[(ncol(dist.m1)-1),])[2:5]
+
+## ----plot shadow df3-----------------------------------------------------
 ## Plot of the manifold: add colored markers on last point and their neighbors
 p3 <- plot_ly(df1, x = ~X.t0, y=~X.t1, z=~X.t2, marker=(list(color=grey)), opacity=0.25) %>%
     layout(scene = list(xaxis = list(title = 'X'),
@@ -53,8 +62,7 @@ p3 <- plot_ly(df1, x = ~X.t0, y=~X.t1, z=~X.t2, marker=(list(color=grey)), opaci
               line = list(width = 6, color = "blue"), showlegend = FALSE)
 p3
 
-
-## ----time series with neighbors highlighted------------------------------
+## ----time series with neighbors highlighted, echo=TRUE-------------------
 time1 <- min(neigb1,length(X)):length(X) # syntatic sugar
 plot(time1, X[time1] , xlab="Time", ylab="X", type="b", lty=3)
 cores <- c("blue", "red","green","orange", "magenta")
@@ -64,7 +72,7 @@ for(i in c(length(X)-3,neigb1)){
     lines(ind, X[ind], type="b", col=cores[z], lwd=2, pch=19)
     z <- z+1}
 
-## ----time series with projected point------------------------------------
+## ----time series with projected point, echo=TRUE-------------------------
 plot(time1, X[time1] , xlab="Time", ylab="X", type="b", lty=3)
 cores <- c("blue", "red","green","orange", "magenta")
 z <- 1
@@ -144,17 +152,6 @@ plot(rho ~ E, data=find.emb, type="b",
      xlab = "Embedding dimensions",
      ylab = expression(paste("Forecast skill (",rho,")",sep="")))
 
-## ----prediction decay example with five steps, eval=FALSE----------------
-## predE3tp5 <- simplex(time_series = X, E = 3, tp = 5, stats_only = FALSE)
-## fitstp5 <- predE3tp5$model_output[[1]]
-## plot(pred ~ obs, data = fitstp5)
-## points(pred ~ obs, data = fitstp5[nrow(fitstp5),], col = "blue", pch=19)
-## plot(pred ~ time, data = fitstp5, type = "l", col = "blue", lwd=3,
-##      xlab="Time", ylab="X", ylim=range(fitstp5[,2:3]))
-## lines(obs ~ time, data = fitstp5, col=grey.colors(1, alpha=0.25), lwd = 6)
-## legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
-##        col=c(grey.colors(1, alpha=0.25), "blue"),bty="n", cex=1.5)
-
 ## ----prediction decay plot, echo=TRUE------------------------------------
 pred.decay <- simplex(time_series = X, E = 3, tp = 1:10)
 plot(rho ~ tp, data=pred.decay,
@@ -212,7 +209,7 @@ plot(nich97I$total, type="b", xlab="Time (days)", ylab="Total number of flies")
 ## ----nicholson data diff, echo = TRUE------------------------------------
 X4 <- diff(nich97I$total)
 
-
+## ----include glossary, child = '../glossary.md'--------------------------
 
 
 
