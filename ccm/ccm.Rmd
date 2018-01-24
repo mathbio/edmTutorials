@@ -160,7 +160,7 @@ print(Y[70])
 
 ```
 
-We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three nearest neighbours within the Mx. It is important to notice that the number of neighbours is based on the optimal embedding (E*+1 = 3). 
+We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the E*+1 (2+1= 3) nearest neighbours within the Mx. 
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -208,14 +208,14 @@ colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
 head(pred_obs_Y)
 ```
 
-This is better visualized in the plot below.
+Below is the plot for all predictions of Y (mapped from X: X_xmap_Y) against the real observations, plus the Pearson's correlation coefficient.
 The red dot represents the predictor (t=70) used in the example above.
 
 ```{r plot_obs_pred_MX_MY}
 fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
 plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
-plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
+plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed Y",
+ylab = "Predicted Y")
 abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_Y<-observed_all_Y[predictor-2]
@@ -231,7 +231,8 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 
 Similarly to the previous mapping, we can now do the opposite: use Y to predict values of X. 
 We obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
-Since we are now cross mapping from My to Mx, the simplex_My is generated directly from the shadow manifold My.
+Since we are now cross mapping from My to Mx, the simplex_My is generated directly from the shadow manifold My. 
+Again, we first create a matrix of distances among the states of My and then we select the E*+1 nearest neighbors. 
 
 ```{r neighbors_y, echo=T}
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
@@ -252,6 +253,7 @@ p_MY_Y_to_X
 Next, we map the simplex_My in Mx, creating the simplex_Mx.
 Analogously, simplex_Mx has the same indexes as simplex_My.
 The figure below shows Mx and simplex_Mx (green dots).
+
 ```{r MX_Y_xmap_X}
 p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X (t-1)'),title='Mx') %>%
@@ -261,7 +263,8 @@ p_MX_Y_to_X
 
 ```
 
-The simplex(Mx) will then be used to estimate the contemporaneous value of the predictor in Mx, obtaining the predicted value X(tilda). 
+The simplex_Mx will then be used to estimate the contemporaneous value of the predictor in Mx, obtaining the predicted value X(tilda). 
+
 ```{r estimating X from Y (Y_xmap_X), echo=T}
 lib<-lib <- c(1, NROW(Shadow_MXY))
 block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y",
@@ -274,14 +277,14 @@ head(pred_obs_X)
 
 ```
 
-Below is the plot for all predictions and observations as well as the Pearson's correlation coefficient.
-The red dot represents the predictor used in the example above.
+Below is the plot for all predictions of X (mapped from Y: Y_xmap_X) against the real observations, plus the Pearson's correlation coefficient.
+The red dot represents the predictor (t=70) used in the example above.
 
 ```{r plot_obs_pred_MY_MX}
 fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
-plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed",
-ylab = "Predicted")
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
+ylab = "Predicted X")
 abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
@@ -290,8 +293,9 @@ points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
 
 ```
 
+Note that the Pearson correlation of Y_xmap_X (r = 0.68) is different than the X_xmap_Y (r = -0.08)
 
-# What does it all mean?
+# What does this all mean?
 
 From the previous results, if we use Y to estimate X we obtain good predictions.
 Since there is information about X inside Y, we can use Y to estimate X.
