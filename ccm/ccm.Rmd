@@ -99,7 +99,7 @@ As we have seen in previous sections, a generic property of lagged-coordinate em
 It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their lagged reconstructions (Mx and My, respectively) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
 
 *Convergent* cross mapping determines how well local neighborhoods on Mx correspond to local neighborhoods on My and vice versa. 
-To do so, a manifold Mx is constructed from lags of the variable X and used to estimate **contemporaneous (Marina: you mean simultaneous in time? Is it really at the same t?)** states of Y. 
+To do so, a manifold Mx is constructed from lags of the variable X and used to estimate **contemporaneous [Marina: you mean simultaneous in time?]** states of Y. 
 Similarly, a manifold My is constructed from lags of variable Y and used to estimate **contemporaneous** states of X.
 
 To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function **(see tutorial XXX if you have doubts about optimal embedding)**.
@@ -123,7 +123,7 @@ print(paste('E*(Y) =',E_star_Y))
 
 The optimal embedding dimensions for X and Y are equal to 2.
 
-## Cross-mapping from Mx to My (X_xmap_Y)
+## Constructing the manifolds Mx and My
 
 Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
 
@@ -131,7 +131,7 @@ Now that we have the optimal embeddings, we can construct the shadow manifolds M
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Now let's create the shadow manifold:
+Now let's create the shadow manifold for both X and Y:
 
 ```{r make_block, echo=T}
 
@@ -144,6 +144,9 @@ head(Shadow_MXY)
 ```
 
 
+The table above shows the X and Y time series and their respective lags X_1 and Y_1. The manifold Mx is thus composed of X and X_1, and My of Y and Y_1. 
+
+## Cross-mapping from Mx to My (X_xmap_Y)
 
 To better understand the cross-mapping, lets start by performing one single prediction using the index of a single predictor.
 
