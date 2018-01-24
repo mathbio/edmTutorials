@@ -29,7 +29,8 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 
 
 The first part of this tutorial introduces the rationale of the **Simplex Projection**,
-which is one of the building blocks of Empirical Dynamics Modelling (EDM). The second part shows how to run a simplex projection using the [rEDM](https://cran.r-project.org/package=rEDM) 
+which is one of the building blocks of Empirical Dynamics Modelling (EDM). 
+The second part shows how to run a simplex projection using the [rEDM](https://cran.r-project.org/package=rEDM) 
 R package (Ye *et al.* 2017) to forecast (predict) values in a time series. Further, you will learn how the forecast
 skill of the simplex projection reveals important properties of the dynamics behind a time series.
 You will need the most recent version of [R](https://cran.r-project.org/) 
@@ -77,8 +78,9 @@ the dynamics look quite messy:
 plot(X, xlab="Time", ylab="X", type="b", lty=3)
 ```
 
-Surprisingly, it is possible to recover the rules that govern a dynamical system using the time series (*i.e.* sequence of observations) of a single variable of the system. 
-The Taken's Theorem provides a simple way to recover the properties of a dynamical 
+Surprisingly, it is possible to recover the rules that govern a dynamical system using the time series 
+(*i.e.* sequence of observations) of a single variable of the system. 
+Takens Theorem tells us that there is a simple way to recover the properties of a dynamical 
 system by building a lagged coordinate plot. 
 Below you can see such a plot for the X variable, where each axis is the lagged X time series itself, *i.e.* $X(t), X(t+1), X(t+2)$.
 Each point in this 3-D plot depicts the state of the system at a given time *t* and in the next two time steps (*t+1* and *t+2*). 
@@ -87,9 +89,11 @@ that the possible states of the system are
 constrained to a certain subset of the plotting space, 
 with a well defined shape. 
 
-We call the plot space, the *state-space reconstruction* (SSR), and the shape it reveals is called a *shadow manifold*, which is an *embedding* of the true attractor of the dynamical system.
-For now, let's assume that the embedding depicted below
-satisfies the Taken's Theorem [^2], and thus nearby points
+We call the plot space, the **state-space reconstruction** (SSR), 
+and the shape it reveals is called a **shadow manifold**, 
+which is an **embedding** of the true attractor of the dynamical system.
+For now, let's assume that the plot depicted below
+is a valid embedding [^2], and thus nearby points
 in the SSR corresponds to similar system states.
 
 Suppose we want to predict the last point of the time series (t = `r length(X)`).
@@ -134,7 +138,11 @@ p3
 
 ```
 
-It is important to notice that the neighboring points in the manifold (above) correspond to the states of the system most similar to the focal state we want to predict. Below you can see each of these states in the time series, represented by the same code color used in the manifold above. 
+It is important to notice that the neighboring points in the manifold
+(above) correspond to the states of the system most similar to the
+focal state we want to predict. Below you can see each of these states
+in the time series, represented by the same code color used in the
+manifold above. 
 
 
 ```{r time series with neighbors highlighted}
@@ -150,13 +158,15 @@ for(i in c(length(X)-3,neigb1)){
 
 ## Simplex forecasting
 
-Here is the trick: because the neighboring points in the shadow manifold
-are trajectories that match the focal one, 
-they provide a good guess of what will happen next in the time series.
-To show this in the plot below, we moved one time step forward each highlighted trajectory that corresponds to
-a neighboring point in the shadow manifold. The arrows project the resulting values of X to t=`r length(X)`, and
-the black triangle is an average of these projected points, which is the forecasted value of X for this time step.
-The actual value of X(t=`r length(X)`) is the last point in the series. Not bad!
+And here is the trick: because the neighboring points in the shadow
+manifold are trajectories that match the focal one, they provide a
+good guess of what will happen next in the time series. To show this
+in the plot below, we moved one time step forward each highlighted
+trajectory that corresponds to a neighboring point in the shadow
+manifold. The arrows project the resulting values of X to t=`r
+length(X)`, and the black triangle is an average of these projected
+points, which is the forecasted value of X for this time step. The
+actual value of X(t=`r length(X)`) is the last point in the series. Not bad! 
 
 ```{r time series with projected point}
 plot(time1, X[time1] , xlab="Time", ylab="X", type="b", lty=3)
@@ -180,9 +190,10 @@ closer points have more weight because they match better the focal trajectory.
 The plot below shows the focal and neighboring points at their original position and 
 projected, that is, at their new positions when we move one time step forward. 
 The black point which is linked to the projected neighbors is the forecasted state.
-The blue point close to the black one is the actual true state. You can zoom in, pan and rotate
-the figure to check that the distances of the projected neighboring points to the forecast are
-scaled to the distances of the original neighbors to the focal point.
+The blue point close to the black one is the actual true state. 
+You can zoom in, pan and rotate the figure to check that the distances
+of the projected neighboring points to the forecast are scaled to the
+distances of the original neighbors to the focal point.
 
 
 ```{r shadow manifold with projected simplex}
@@ -212,7 +223,10 @@ p4 <-
 htmlwidgets::saveWidget(as_widget(p4), file = "p4.html")
 include_url("p4.html", height="600px")
 ```
-The full pseudocode for simplex projection forecast is available
+There are some additional technicalities to calculate simplex
+projections. For instance, the weights of the neighbors 
+scale exponentially with their distances to the focal point.
+All these details are in in a pseudocode available
 [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-algorithms.pdf).
 
 
@@ -230,13 +244,15 @@ To start open R and load the package typing in the R console
 library(rEDM)
 ```
 
-The function `simplex` in the rEDM package runs simplex projections for
-a time series. The argument `E` sets the embedding dimensions (number of time lags in the lagged plot)
-and the argument `stats_only` sets if only statistics of the forecasts should be stored (or the forecasted values too).
+The function `simplex` in the rEDM package runs simplex projections
+for a time series. The argument `E` sets the embedding dimensions
+(number of time lags in the lagged plot) and the argument `stats_only`
+sets if only statistics of the forecasts should be stored (or the
+forecasted values too). 
 
-The command below forecasts one step foward each point 
-in the series for an embedding dimension of three (as we used in the previous section),
-and asks to save the forecasted values:
+The command below forecasts one step forward each point  in the series
+for an embedding dimension of three (as we used in the previous
+section), and stores the forecasted values:
 
 
 ```{r simplex predictions, echo=TRUE}
@@ -250,7 +266,7 @@ names(predE3)
 ```
 
 The last element of the list, called 
-`model_output`, is a list of dataframes with the time,
+`model_output`, is a list of data frames with the time,
 observed and predicted values and the variance of predicted values:
 
 ```{r simplex object E3, echo=TRUE}
@@ -259,7 +275,7 @@ fits <- predE3$model_output[[1]]
 head(fits)
 ```
 
-The one-step foward forecast was very good for most of the points:
+The one-step forward forecast was very good for most of the points:
 
 
 ```{r obs x pred time series, echo=TRUE}
@@ -274,11 +290,12 @@ The Pearson linear correlation between observed and predicted values
 is a measure of **forecast skill**. This correlation is one of the statistics
 available in the object returned by the `simplex` function:
 
+
 ```{r forecast skill value, echo=TRUE}
 predE3$rho
 ```
 
-The correlation is close to one, which indicates an excelent forecast skill.
+The correlation is close to one, which indicates an excellent forecast skill.
 
 
 ## Optimal embedding dimension {#sub2}
@@ -302,12 +319,16 @@ plot(pred ~ obs, data = predE2$model_output[[3]],
 par(mfrow=c(1,1))
 ```
 
-Embeddings with too few or too many dimensions do not unravels the original manifold into a shadow manifold properly and thus worsen the forecast, above the cases of using $E=2$ or $E=10$. 
-To find out the optimal embedding dimension, we can plot the forecast skill (correlation between predicted and observed) against the embedding dimension. The optimal number of dimensions for our current case is three (as we guessed
-in the previous section):
+Embeddings with too few or too many dimensions do not unravel the
+original manifold into a shadow manifold properly and thus worsen the
+forecast. In our example we can see this for  $E=2$ or $E=10$. To find
+out the optimal embedding dimension, we can plot the forecast skill
+(correlation between predicted and observed) against the embedding
+dimension. The optimal number of dimensions for our current case is
+three (as we guessed in the previous section):
 
 
-```{r find embbeding dimensions, echo=TRUE}
+```{r find embedding dimensions, echo=TRUE}
 find.emb <- simplex(time_series = X, E = 1:10)
 plot(rho ~ E, data=find.emb, type="b",
      xlab = "Embedding dimensions",
@@ -329,10 +350,13 @@ legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
        col=c(grey.colors(1, alpha=0.25), "blue"),bty="n", cex=1.5)
 ```
 
-So far we used simplex projection to forecast one time step forward.
-The commands below run forecasts for one to ten time steps ahead
-(argument `tp = 1:10` in the function `simplex`)
-and plot the forecast skill in function of these times to prediction:
+So far we used simplex projection to forecast one time step forward, 
+but how the simplex projection perform as we increase the
+time for forecast?
+To check this run the commands below 
+to run forecasts for one to ten time steps ahead
+(argument `tp = 1:10` in the function `simplex`) and plot the forecast
+skill in function of these times to prediction: 
 
 
 ```{r prediction decay plot, echo=TRUE}
@@ -345,18 +369,19 @@ plot(rho ~ tp, data=pred.decay,
 
 There is a sharp decline of the forecast skill when we increase
 the time to prediction. This is a characteristic feature of
-chaotic dynamics and thus this plot can be used to distinguish
-deterministic chaos from random noise.
+chaotic dynamics. The next section show how we can use this property
+to distinguish deterministic chaos from random noise in a time series.
 
 
-## Distiguishing error from chaos
+## Distinguishing error from chaos
 
-We will apply the prediction-decay diagnostics
+Now we will apply the prediction-decay diagnostics
 to non-chaotic time series, starting with
 a pure deterministic simulation.
 The code below simulates 150 time steps
 of the [logistic map](https://en.wikipedia.org/wiki/Logistic_map) 
-at the verge of chaos:
+at the verge of chaos. The result is time series with a complex
+periodicity, but not quite a chaotic one.
 
 ```{r non-chaotic data, echo=TRUE}
 X2 <- c()
@@ -366,8 +391,10 @@ for(i in 2:150)
 ## Plots the series
 plot(X2, xlab="Time", ylab="X", type="b", lty=3)
 ```
-The forecast skill is very high and varies very little with the
-embedding dimension, so we will use an embedding dimension of two.
+The forecast skill is very high (as we would expect for a non-chaotic
+deterministic time series) and varies very little with the
+embedding dimension.
+
 
 ```{r nc find embedding, echo=TRUE}
 find.emb2 <- simplex(time_series = X2, E = 1:10)
@@ -377,9 +404,11 @@ plot(rho ~ E, data=find.emb2, type="b",
      ylab = expression(paste("Forecast skill (",rho,")",sep="")))
 ```
 
-And there is no decay in the forecast skill
+We will proceed using an embedding dimension of two, to check
+the forecast skill x prediction time plot. 
+The plot shows that here is not a decay in the forecast skill
 with the time to prediction, 
-which is not suprising for a periodic deterministic time series:
+which again is not surprising for a periodic deterministic time series:
 
 ```{r nc pred decay}
 pred.decay2 <- simplex(time_series = X2, E = 6, tp = 1:50)
@@ -391,10 +420,10 @@ plot(rho ~ tp, data=pred.decay2,
 ```
 
 Things can get more interesting if we add some noise
-to the time series. The commands below
-simulate that the time series has independent measurement errors with constant variance.
-To do that we add to each observation a value drawn from a Gaussian distribution with zero mean and
-standard deviation equal to those of the time series itself.
+to the time series. The commands below simulate that the time series
+has independent measurement errors with constant variance. To do that
+we add to each observation a value drawn from a Gaussian distribution
+with zero mean and standard deviation equal to those of the time series itself.
 
 
 ```{r add noise, echo=TRUE}
@@ -403,9 +432,11 @@ X3 <- X2 + rnorm(n = length(X2), mean = 0, sd = sd(X2))
 ## Plot series
 plot(X3, xlab="Time", ylab="X", type="b", lty=3)
 ```
-Now the series looks chaotic. Or should we say 'only noisy'?
 
-```{r noise find embbeding, eval=FALSE}
+Now the series looks chaotic. Or should we say 'only noisy'?
+The prediction decay plot provides the answer:
+
+```{r noise find embedding, eval=FALSE}
 find.emb3 <- simplex(time_series = X3, E = 1:10)
 plot(rho ~ E, data=find.emb3, type="b", ylim=c(0,1),
      xlab = "Embedding dimensions",
@@ -444,23 +475,26 @@ commands below:
 
 ```{r nicholson data, echo=TRUE}
 nich97I <- read.csv("https://www.stat.berkeley.edu/~brill/blowfly97I")
-plot(nich97I$total, type="b", xlab="Time", ylab="Total number of flies")
+plot(nich97I$total, type="b", xlab="Time (days)", ylab="Total number of flies")
 ```
 
 ### Hints
 
-#### 1
-The time series has some periodicity, which in some
+**1.** The time series has some periodicity, which in some
 cases can be caused by seasonal factors. This makes EDM analysis
 much more complicated[^3]. Nevertheless, in some cases you can keep it simple
-by analysing the time series of the differentiated values:
+by analysing the time series of the differentiated values, which in
+our case are the variation in the population sizes form one time step
+to the other. For the purpose of this exercise this trick solves the
+problem of periodicity in the data. You get the differentiated time
+series with the command:
+
 
 ```{r nicholson data diff, echo = TRUE}
 X4 <- diff(nich97I$total)
 ```
 
-#### 2
-S-mapping (Sugihara 1994) is another forecasting method that 
+**2.**  S-mapping (Sugihara 1994) is another forecasting method that 
 can be used for identify another aspect of complex dynamics, 
 called state-dependent behavior.
 This method is available in rEDM (see the tutorial of the package). 
@@ -484,6 +518,6 @@ Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
 
 [^1]: This section is adapted from the tutorial ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), by Owen Petchey.
 
-[^2]: The [next section](#sub2) shows some compealling evidence for this.
+[^2]: The [next section](#sub2) shows some compelling evidence for this.
 
 [^3]: For a full appraisal see: Deyle, E.R., Maher, M.C., Hernandez, R.D., Basu, S. and Sugihara, G., 2016. Global environmental drivers of influenza. Proceedings of the National Academy of Sciences, 113(46), pp.13081-13086.

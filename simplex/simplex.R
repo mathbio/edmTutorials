@@ -4,15 +4,8 @@ library(plotly)
 library(rEDM)
 library(dplyr)
 
-
-opts_chunk$set(fig.align = 'center',
-               fig.show = 'hold',
-               fig.height = 5,
-               warning = FALSE, message = FALSE, error = FALSE, echo=FALSE)
-options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
-
 ## ----call vignette, echo=TRUE, eval=FALSE--------------------------------
-## vignette("rEDM-tutorial", package="rEDM")
+vignette("rEDM-tutorial", package="rEDM")
 
 ## ----generate data, echo=TRUE--------------------------------------------
 ## Two vectors to store data
@@ -145,7 +138,7 @@ plot(pred ~ obs, data = predE2$model_output[[3]],
      main = bquote("Embedding = 10, " ~ rho == .(round(predE2$rho[3],2))))
 par(mfrow=c(1,1))
 
-## ----find embbeding dimensions, echo=TRUE--------------------------------
+## ----find embedding dimensions, echo=TRUE--------------------------------
 find.emb <- simplex(time_series = X, E = 1:10)
 plot(rho ~ E, data=find.emb, type="b",
      xlab = "Embedding dimensions",
@@ -198,7 +191,7 @@ X3 <- X2 + rnorm(n = length(X2), mean = 0, sd = sd(X2))
 ## Plot series
 plot(X3, xlab="Time", ylab="X", type="b", lty=3)
 
-## ----noise find embbeding, eval=FALSE------------------------------------
+## ----noise find embedding, eval=FALSE------------------------------------
 ## find.emb3 <- simplex(time_series = X3, E = 1:10)
 ## plot(rho ~ E, data=find.emb3, type="b", ylim=c(0,1),
 ##      xlab = "Embedding dimensions",
@@ -214,8 +207,12 @@ plot(rho ~ tp, data=pred.decay3,
 
 ## ----nicholson data, echo=TRUE-------------------------------------------
 nich97I <- read.csv("https://www.stat.berkeley.edu/~brill/blowfly97I")
-plot(nich97I$total, type="b", xlab="Time", ylab="Total number of flies")
+plot(nich97I$total, type="b", xlab="Time (days)", ylab="Total number of flies")
 
 ## ----nicholson data diff, echo = TRUE------------------------------------
 X4 <- diff(nich97I$total)
+
+
+
+
 
