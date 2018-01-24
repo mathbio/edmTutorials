@@ -380,7 +380,7 @@ to non-chaotic time series, starting with
 a pure deterministic simulation.
 The code below simulates 150 time steps
 of the [logistic map](https://en.wikipedia.org/wiki/Logistic_map) 
-at the verge of chaos. The result is time series with a complex
+at the verge of chaos. The result is a time series with a complex
 periodicity, but not quite a chaotic one.
 
 ```{r non-chaotic data, echo=TRUE}

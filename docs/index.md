@@ -10,8 +10,8 @@ Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/m
 ## 2. [Simplex projection made simple](simplex.html)
 Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/simplex/simplex.R).
 
-## 3. [Convergent cross-mapping (CCM)](ccm.html)
-Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.R).
+## 3. [Convergent cross-mapping (CCM)] <!--- (ccm.html)
+Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.R). -->
 
 ## 4. Extended CCM analysis
 
