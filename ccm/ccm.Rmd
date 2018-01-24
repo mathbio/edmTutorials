@@ -295,17 +295,18 @@ points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
 
 Note that the Pearson correlation of Y_xmap_X (r = 0.68) is different than the X_xmap_Y (r = -0.08)
 
-# What does this all mean?
 
-From the previous results, if we use Y to estimate X we obtain good predictions.
-Since there is information about X inside Y, we can use Y to estimate X.
-In another words, if X causes Y, the cross mapping skill from My to Mx will generally gives us good results (high correlations).
-Important to note here is the inverse relation between cross mapping and causality.
+## But what causes what?
 
-## Convergent part of CCM
+The Pearson correlation of Y_xmap_X is different than the X_xmap_Y. When we used Y to estimate (map) X we obtained good predictions (r = 0.68). However, when we used X to estimate (map) Y, the correlation between estimate and observed was quite low (r = -0.08).
+This means that there is information about X dynamics inside the Y dynamics, therefore we can use Y to estimate X. Hence, if there is information of X within Y, this means that X somehow influences and causes Y. 
+Indeed, since all our data is synthetic, we know this is true: we created the variable X independently of Y, and X was causing changes in Y. 
+So when X causes Y, the cross mapping skill from My to Mx (Y_xmap_X) will generally gives us good results (high correlations), but *not* X_xmap_Y. 
+It is *very* important to notice that there is an inverse relation between cross mapping and causality: if X causes Y (X --> Y), Y cross map of X (Y_xmap_X) shows positive correlation.
 
-Convergence means that cross-mapped estimates improve in estimation skill with time-series length L (sample size used to construct a library).
+## Convergent Cross Mapping (CCM)
 
+Convergence means that the estimates from the cross-mapping improve with increasing time-series length. The length L is the sample size used to construct a library.
 
 
 ```{r convergent}
@@ -319,32 +320,33 @@ Convergence means that cross-mapped estimates improve in estimation skill with t
   Y_xmap_X_means <- ccm_means(Y_xmap_X)
   
   #plot graphs
-  plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",main='Two Species', xlab = "Library Size", ylab = "Cross Map Skill (rho)", ylim = c(0,1))
+  plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",main='Two Species', xlab = "Library Size (L)", ylab = "Cross Map Skill (Pearson rho)", ylim = c(0,1))
   lines(Y_xmap_X_means$lib_size, pmax(0, Y_xmap_X_means$rho), col = "blue")
   legend(x = "topleft", legend = c("X_xmap_Y", "Y_xmap_X"), col = c("red", "blue"), cex=1.1,lwd=2, inset = 0.02)
   
 ```
 
-With more data, the trajectories defining the attractor fill in, resulting in closer nearest neighbors and declining estimation error (a higher correlation coefficient) as L increases. Thus, CCM becomes a necessary condition for causation.
+This means that the more data you have (the larger the L), the more trajectories you have to define the attractor, resulting thus in closer nearest neighbors and less estimation error (*i.e.* a higher correlation coefficient between estimated and observed). The convergence of the cross mapping (CCM) is then a necessary condition for causation. **[MARINA: this last sentence need further explanation of why]**
 
 
 # Exercises
 
-(1) What happens when there is a invertion in cause-effect realation? Change the model so the Y variable is causing changes in X.
+(1) What happens when there is an invertion in cause-effect relation? Change the model so that the Y variable causes changes in X.
 
 (2) What if there is no interaction between X and Y?
 
-(3) What about both variables interacting to each other?
+(3) What about both variables interacting with each other (X causing X and Y causing X)?
 
-(4) Identifying causal networks is important for effective policy and management recommendations on climate, epidemiology, financial regulation, and much else. 
+(4) Identifying causal networks within systems is very important for effective policy and management recommendations on *e.g.* climate, ecosystem services, epidemiology and financial regulation. 
 In the following exercise, you should use CCM to identify causality between anchovy landings in California and Newport Pier sea-surface temperature.
 
 ```{r ex3}
 data(sardine_anchovy_sst)
 ```
 
-# Learn more
+# Learn more 
 
+**[Mesmas referencias dos simplex?]**
 * Sugihara G. and R. M. May. 1990. Nonlinear forecasting as a way of distinguishing chaos 
 from measurement error in time series. Nature 344:734–741.
 * Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. 
