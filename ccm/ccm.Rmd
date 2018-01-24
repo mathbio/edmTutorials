@@ -159,9 +159,8 @@ predictor<-70
 print(Y[70])
 
 ```
-[Marina working]
 
-We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three **[[WHY THREE?]]** nearest neighbours within the Mx:
+We are going to use the nearest neighbours of x(70) within the manifold Mx to predict y(70). To do this, we first create a matrix of distances among the states of Mx and then we select the three **[WHY THREE?]** nearest neighbours within the Mx:
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -196,7 +195,7 @@ The simplex_My will then be used to estimate the contemporaneous value of the pr
 **[MARINA: nao rola colocar um plot aqui que nem o do simplex, tipo com a estimativa de y(70) e o valor real? Pq o proximo passo abaixo ja eh expandir isso para todo o Y. Ou pelo menos so o valor do predicted y(70) e observed y(70)]**
 
 
-Now we can expand the idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the *real* observed states of Y. We can then compare the predicted and observed:
+Now we can expand the idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If we then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the real *observed* states of Y. We can then compare the predicted and observed:
 
 ```{r estimating Y from X (X_xmap_Y), echo=T}
 lib<-lib <- c(1, NROW(Shadow_MXY))
@@ -228,9 +227,10 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 
 
 
-## Cross-mapping from My to Mx 
+## Cross-mapping from My to Mx (Y_xmap_X)
 
-Similarly to the previous mapping, we obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
+Similarly to the previous mapping, we can now do the opposite: use Y to predict values of X. 
+We obtain the indexes of the E*+1 nearest neighbors from the given predictor. 
 However, since we are cross-mapping from My to Mx, the simplex_My is generate in shadow maninfold My.
 
 ```{r neighbors_y, echo=T}
