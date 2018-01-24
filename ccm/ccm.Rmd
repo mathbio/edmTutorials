@@ -40,11 +40,11 @@ or in your local R installation with the command
 
 ## General idea [^1]
 
-One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same system. Consider two variables, x and y, that interact in a dynamic system. Then the univariate reconstructions based on x alone should uniquely identify the system state and and thus the corresponding value of y, and vice-versa.
+One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same dynamical system. Consider two variables, x and y, that interact in a dynamic system. Then the univariate reconstructions based on x alone should uniquely identify the system state and thus the corresponding value of y, (and vice versa).
 
 ## Syntetic Data
 
-First, we simulate a deterministic discrete-time dynamics with chaotic behavior.
+First, let's simulate a deterministic discrete-time dynamics with chaotic behavior.
 To create a 150-step time series following this dynamics, run the commands below in the R console:
 
 ```{r generate data, echo=TRUE}
@@ -64,8 +64,7 @@ XY<-as.data.frame(cbind(X,Y))
   
 ```
 Note that the variable X is causing changes in Y. 
-However, if we plot the time series of these two coupled variables under the chaotic regime, their populations do not seem to be related.
-Below you can plot the X and Y time series.
+However, if we plot the X and Y time series of this chaotic system, they do not seem to be related:
 
 ```{r plot 1st time series}
 par(cex=1.1,lwd=2)
@@ -78,7 +77,8 @@ par(cex=1.1,lwd=2)
   
 ```
 
-Moreover, the correlation coeficient between X and Y is shown in the figure below.
+X and Y do not seem to be related, although we know that X and Y are coupled (it's a syntetic data!).
+Moreover, we can calculate the correlation coeficient between X and Y:
 
 ```{r plot correlation}
 fit<-lm(Y ~ X)
@@ -88,57 +88,62 @@ legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),inset = 0
 
 ```
 
-X and Y are not correlated, even though the data comes from a model with causality (*i.e.* X is causing changes in Y). 
+The results show that X and Y are not correlated, even though the data comes from a model with known causality (*i.e.* X is causing changes in Y). 
 This is a clear example that "lack of correlation does not imply lack of causation".
 
 ## Cross Mapping[^2]
 
-How can we then extract the causality of X in Y from the coupled dynamics (time series)?
-As we have seen in previous sections, a generic property of lagged-coordinate embedding is that states of X(t) on the lagged reconstruction map (Mx) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on Mx map to local neighborhoods on M. 
+How can we then extract the causality of X in Y from their dynamics (time-series)?
+As we have seen in previous sections, a generic property of lagged-coordinate embedding is that the states of X(t) on the lagged reconstruction map (Mx) maps one-to-one to states on the original attractor manifold M, and local neighborhoods on Mx map to local neighborhoods on M. 
 
-It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their respective lagged reconstructions (Mx and My) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
+It follows that for two variables X and Y that are dynamically coupled, local neighborhoods on their lagged reconstructions (Mx and My, respectively) will map to each other since X and Y are essentially alternative observations of the common original attractor manifold M.
 
-Convergent cross mapping determines how well local neighborhoods on Mx correspond to local neighborhoods on My and vice versa. 
-To do so, a manifold Mx is constructed from lags of the variable X and used to estimate **contemporaneous/simultaneous (is it really at the same t?)** states of Y. 
+*Convergent* cross mapping determines how well local neighborhoods on Mx correspond to local neighborhoods on My and vice versa. 
+To do so, a manifold Mx is constructed from lags of the variable X and used to estimate **contemporaneous (Marina: you mean simultaneous in time? Is it really at the same t?)** states of Y. 
 Similarly, a manifold My is constructed from lags of variable Y and used to estimate **contemporaneous** states of X.
 
-To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function **(tutorial XXX)**.
+To do so, we first need to obtain the optimal embedding dimension for both variables using the simplex function **(see tutorial XXX if you have doubts about optimal embedding)**.
+
 
 ```{r optimal embeddings X, echo=T}
 options(warn = -1)
 simplex_X<-simplex(X,silent=T)
-plot(simplex_X$rho,type='o')
+plot(simplex_X$rho,type='o', ylab = "Forecast Skill (rho)", xlab="Embedding Dimension (E)")
 E_star_X<-which.max(simplex_X$rho)
 print(paste('E*(X) =',E_star_X))
 ```
 
 ```{r optimal embeddings Y, echo=T}
 simplex_Y<-simplex(Y,silent=T)
-plot(simplex_Y$rho,type='o')
+plot(simplex_Y$rho,type='o', ylab = "Forecast Skill (rho)", xlab="Embedding Dimension (E)")
 E_star_Y<-which.max(simplex_Y$rho)
 print(paste('E*(Y) =',E_star_Y))
 
 ```
 
+The optimal embedding dimensions for X and Y are equal to 2.
+
 ## Cross-mapping from Mx to My (X_xmap_Y)
-Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from the rEDM package. Use this command to download the function code and load it into your
-R workspace (it will be included in rEDM itself in future releases):
+
+Now that we have the optimal embeddings, we can construct the shadow manifolds Mx and My using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
 
 ```{r load make_block, eval=TRUE, echo=FALSE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Now for the shadow manifold:
+Now let's create the shadow manifold:
 
 ```{r make_block, echo=T}
 
-Shadow_MXY<-make_block(XY,max_lag = 2)
+Shadow_MXY<-make_block(XY,max_lag = 2) # max_lag is the optimal embedding dimension
 Shadow_MX<-Shadow_MXY[,2:3]
 Shadow_MY<-Shadow_MXY[,4:5]
 
 head(Shadow_MXY)
 
 ```
+
+
 
 To better understand the cross-mapping, lets start by performing one single prediction using the index of a single predictor.
 
