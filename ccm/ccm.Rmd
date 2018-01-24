@@ -48,7 +48,7 @@ vignette("rEDM-tutorial", package="rEDM")
 
 One of the corollaries to the Generalized Takens’ Theorem is that it should be possible to cross predict or cross map between variables that are observed from the same dynamical system. Consider two variables, X and Y, that interact in a dynamic system. Then the univariate reconstructions based on X alone should uniquely identify the system state and thus the corresponding value of Y, (and vice versa).
 
-## Syntetic Data
+## Synthetic Data
 
 First, let's simulate a deterministic discrete-time dynamics with chaotic behavior.
 To create a 150-step time series following this dynamics, run the commands below in the R console:
@@ -127,6 +127,7 @@ plot(simplex_X$rho,type='o', ylab = "Forecast Skill (rho)", xlab="Embedding Dime
 E_star_X<-which.max(simplex_X$rho)
 print(paste('E*(X) =',E_star_X))
 ```
+The optimal embedding dimension ($E*$) is equal to two. 
 
 ```{r optimal embeddings Y, echo=T}
 simplex_Y<-simplex(Y,silent=T)
@@ -136,9 +137,8 @@ print(paste('E*(Y) =',E_star_Y))
 
 ```
 
-The optimal embedding (E*) dimensions for X and Y are equal to two. 
 
-## Constructing the manifolds $M_X$ and My
+## Constructing the manifolds $M_X$ and $M_Y$
 
 Now that we have the optimal embeddings, we can construct the shadow manifolds $M_X$ and $M_Y$ using the make_block function from the rEDM package. Use the command below to load this function into your R workspace (it will be included in rEDM itself in future releases of the package):
 
@@ -146,7 +146,7 @@ Now that we have the optimal embeddings, we can construct the shadow manifolds $
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-Now let's create the shadow manifold for both X and Y. Since E* = 2, we will use two dimensions to construct the shadow manifolds $M_X$ and My. This means that $M_X$ will be build based on X(t) and X(t+1), similarly $M_Y$ is created from Y(t) and Y(t+1).
+Now let's create the shadow manifold for both $X$ and $Y$. Since $E* = 2$, we will use two dimensions to construct the shadow manifolds $M_X$ and My. This means that $M_X$ will be build based on $X(t)$ and $X(t+1)$, similarly $M_Y$ is created from $Y(t)$ and $Y(t+1)$.
 
 ```{r make_block, echo=T}
 
@@ -159,14 +159,14 @@ head(Shadow_MXY)
 ```
 
 
-The table above shows the X and Y time series and their respective lags X_1 and Y_1. The manifold $M_X$ is thus composed of X and X_1, and $M_Y$ of Y and Y_1. 
+The table above shows the $X$ and $Y$ time series and their respective lags $X_1$ and $Y_1$. The manifold $M_X$ is thus composed of $X$ and $X_1$, and $M_Y$ of $Y$ and $Y_1$. 
 
 ## Cross-mapping from $M_X$ to $M_Y$ (X_xmap_Y)
 
-To better understand the cross mapping, lets start by using X to predict one single value in Y. Here, we are using the term "prediction", but instead of predicting future values of X (as in the simplex tutorial **LINK**), we will predict values of Y(t) using X(t) and vice versa. 
+To better understand the cross mapping, let's start by using $X$ to predict one single value in $Y$. Here, we are using the term "prediction", but instead of predicting future values of $X$ (as in the [simplex tutorial](simplex.html)), we will predict values of $Y(t)$ using $X(t)$ and vice versa. 
 This "cross-prediction" is performed between different variables but for the same point in time.
 
-Suppose we want to predict the value y(t=70), using the index of a single predictor:
+Suppose we want to predict the value $y(t=70)$:
 
 ```{r MX X_xmap_Y_code, echo=T}
 
@@ -175,7 +175,7 @@ print(Y[70])
 
 ```
 
-We are going to use the nearest neighbours of x(70) within the manifold $M_X$ to predict y(70). To do this, we first create a matrix of distances among the states of $M_X$ and then we select the E*+1 (2+1= 3) nearest neighbours within the $M_X$. 
+We are going to use the nearest neighbours of $x(t=70)$ within the manifold $M_X$ to predict the value of $y(t=70)$. To do this, we first calculate a matrix of distances among the all states of $M_X$ and then we select the $E*+1$, in this example 2+1 = 3, nearest neighbours within the $M_X$, creating the simplex_Mx.
 
 ```{r neighbors_X, echo=T}
 dist.matrix_X <- as.matrix(dist(Shadow_MX, upper=TRUE))
@@ -184,7 +184,7 @@ neigh_X_print<-c(neigb_X)
 print(paste('simplex_Mx:',list(neigh_X_print)))
 ```
 
-We can also plot $M_X$ with the predictor (red dot) and the respective neighbours simplex_Mx (blue dots):
+We can also plot $M_X$ with the predictor (red dot) and the respective neighbours simplex_Mx (blue dots). Zoom in to see all the dots.
 
 ```{r MX X_xmap_Y, echo=FALSE, fig.align='center'}
 p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
@@ -194,7 +194,7 @@ p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opaci
 p_MX_X_to_Y
 ```
 
-The cross-mapping process starts by finding (mapping) the simplex_Mx into My, creating the simplex_My. Note that simplex_My has the same indexes as simplex_Mx.
+The cross-mapping process starts by finding (mapping) the simplex_Mx into $M_Y$, creating the simplex_My. Note that simplex_My has the same indexes as simplex_Mx.
 The figure below shows $M_Y$ and simplex_My (green dots).
 
 ```{r MY_X_xmap_Y}
@@ -206,19 +206,25 @@ p_MY_X_to_Y
 
 ```
 
-The simplex_My will then be used to estimate the contemporaneous value of the predictor y(70) in My, obtaining the predicted value Y(tilda). 
-**[MARINA: nao rola colocar um plot aqui que nem o do simplex, tipo com a estimativa de y(70) e o valor real? Pq o proximo passo abaixo ja eh expandir isso para todo o Y. Ou pelo menos so o valor do predicted y(70) e observed y(70)]**
+The simplex_My will then be used to estimate the value of $y(t=70)$ in $M_Y$, obtaining the predicted value $\tilde{Y}$. 
 
+```{r predicted y, echo=T}
+
+pred_obs_Y[(predictor-2),]
+
+```
+
+Note that the index of the predicted point is off by two. That's because the first $E^* = 2$ points cannot be predicted, so the prediction of $y(t=70)$ corresponds to the value at index 68 of the table.
 
 Now we can expand the idea of predicting a single state of Y based on X, to predicting all the states of Y using X. If we then do this prediction for every single value of Y, we will have a vector of the predicted states of Y (using X) and the real *observed* states of Y. We can then compare the predicted and observed:
 
 ```{r estimating Y from X (X_xmap_Y), echo=T}
-lib<-lib <- c(1, NROW(Shadow_MXY))
+lib <- c(1, NROW(Shadow_MXY))
 block_lnlp_output_XY <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("X",
  "X_1"), target_column = "Y", stats_only = FALSE, first_column_time = TRUE)
 observed_all_Y <- block_lnlp_output_XY$model_output[[1]]$obs
 predicted_all_Y <- block_lnlp_output_XY$model_output[[1]]$pred
-pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y))
+pred_obs_Y<-as.data.frame(cbind(predicted_all_Y,observed_all_Y)) #
 colnames(pred_obs_Y)<-c('Predicted Y','Observed Y')
 head(pred_obs_Y)
 ```
@@ -237,8 +243,6 @@ observed_pred_Y<-observed_all_Y[predictor-2]
 predicted_pred_Y<-predicted_all_Y[predictor-2]
 points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 ```
-
-
 
 
 
