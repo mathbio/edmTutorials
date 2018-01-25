@@ -376,7 +376,7 @@ variable $X$ independently of $Y$, and $X$ was causing changes in $Y$. So when
 $X$ causes $Y$, the cross mapping skill from $M_Y$ to $M_X$ (Y_xmap_X) will
 generally gives us good results (high correlations), but *not* X_xmap_Y.  It
 is *very* important to notice that there is an inverse relation between cross
-mapping and causality: if $X$ causes $Y$ ($X \therefore Y$), $Y$ cross map of
+mapping and causality: if $X$ causes $Y$ ($X \rightarrow Y$), $Y$ cross map of
 $X$ (Y_xmap_X) shows a positive (large) correlation.
 
 ## Convergent Cross Mapping (CCM)
