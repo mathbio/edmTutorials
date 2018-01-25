@@ -1,7 +1,7 @@
 ---
 title: "A Quick Tour through State Space Reconstruction"
 subtitle: "Tutorial 1 of The Short Course 'An Introduction to Empirical Dynamics Modelling', ICTP SAIRF"
-author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho,  Marina Rillo, Rafael Lopes, Roberto Kraenkel"
+author: "Brenno Cabella, Paulo Inácio Prado, Renato Coutinho, Marina Rillo, Rafael Lopes, Roberto Kraenkel"
 date: "ICTP SAIFR, School on Physics Applications in Biology, January 2018"
 output:
          rmdformats::readthedown:
@@ -28,12 +28,12 @@ options(formatR.arrow = TRUE,width = 90)###, cache=TRUE)
 ```
 
 
-This tutorial presents the general idea of attractor reconstruction with synthetic data, 
-and proposes two exercises with simulated data. 
+This tutorial presents the general idea of attractor reconstruction
+with synthetic data, and proposes two exercises with simulated data.
 For these activities, you will need the most recent version of
-[R](https://cran.r-project.org/) 
-and the rEDM package installed in your work computer. 
-To start, open R and load the package by typing the following code in the R console:
+[R](https://cran.r-project.org/) and the rEDM package installed in
+your work computer.  To start, open R and load the package by typing
+the following code in the R console:
 
 
 ```{r load rEDM, echo=TRUE}
@@ -41,10 +41,10 @@ library(rEDM)
 ```
 
 
-Before you proceed
-please read through the essential concepts by 
-reading the introduction and the first section (*"Empirical Dynamic Modelling"*) of
-rEDM's tutorial that you can find [here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html) 
+Before you proceed please read through the essential concepts by
+reading the introduction and the first section (*"Empirical Dynamic
+Modelling"*) of rEDM's tutorial that you can find
+[here](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html)
 or in your local R installation with the command
 
 
@@ -54,19 +54,21 @@ vignette("rEDM-tutorial", package="rEDM")
 
 # A simple case: harmonic oscillator
 
-Let's get the grips with R language and to figure out how 
-to reconstruct a state space with only one time series and its lags.
-For the first example, we use a very well-known system and its representation on state space, 
-the harmonic oscillator:
+Let's get the grips with R language and to figure out how to
+reconstruct a state space with only one time series and its lags.  For
+the first example, we use a very well-known system and its
+representation on state space, the harmonic oscillator:
 
 
 $\frac{dx}{dt}=y$
 
 $\frac{dy}{dt}=-x$
 
-which has the solution $x(t)=A \sin(t), \ y(t)=A \cos(t)$, so we can draw the state 
-space of this system by laying down in two Cartesian axis its two state variables, $x(t)$ and $y(t)$. The attractors of this system are circles, that
-is, all possible trajectories of a solution form a circle in the state space:
+which has the solution $x(t)=A \sin(t), \ y(t)=A \cos(t)$, so we can
+draw the state space of this system by laying down in two Cartesian
+axis its two state variables, $x(t)$ and $y(t)$. The attractors of
+this system are circles, that is, all possible trajectories of a
+solution form a circle in the state space:
 
 ```{r generates data for the harmonic oscillator, echo=TRUE}
 ## Generate the data at tau = 0.2 time intervals
@@ -94,29 +96,27 @@ legend("topright", c("X","Y"), col=c("red", "blue"),
 
 ## A reconstruction of the state space
 
-Now suppose that all the information you have about this system is 
-a time series of one of the state variables, say $X(t)$. 
-Because $Y(t)$ is missing, we are not able to construct a state
-space as we see above, but Takens theorem tells us that we
-can do a reconstruction of the state space that recovers the information of 
-the original state space. This **state space reconstruction**
-creates an **embedding** of  a **shadow manifold** of the atractor. 
-So we can define the shadow manifold as 
-a valid topological reconstruction of the
-attractor. 
+Now suppose that all the information you have about this system is a
+time series of one of the state variables, say $X(t)$.  Because $Y(t)$
+is missing, we are not able to construct a state space as we see
+above, but Takens theorem tells us that we can do a reconstruction of
+the state space that recovers the information of the original state
+space. This **state space reconstruction** creates an **embedding** of
+a **shadow manifold** of the atractor.  So we can define the shadow
+manifold as a valid topological reconstruction of the attractor.
 
 
-To do a state space reconstruction we 
-create new variables by lagging the time series 
-by multiples of a time interval $\tau$. In this case we will use
-the interval between observations ($\tau=0.2$ time units).
+To do a state space reconstruction we create new variables by lagging
+the time series by multiples of a time interval $\tau$. In this case
+we will use the interval between observations ($\tau=0.2$ time units).
 The R commands below create a data table object (which is called a
 *data frame* in R) with the original time series and its lagged
-version. The  handy function `make_block` by the rEDM authors does this
-job. Use this command to download the function code and load it in your 
-R workspace (the function will be included in the rEDM package in future releases):
+version. The handy function `make_block` by the rEDM authors does this
+job. Use this command to download the function code and load it in
+your R workspace (the function will be included in the rEDM package in
+future releases):
 
-```{r load make_block, eval=TRUE, echo=FALSE}
+```{r load make_block, eval=TRUE, echo=TRUE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
@@ -129,8 +129,11 @@ series of data:
 df1 <- make_block(data.frame(x=x1), t=time1, max_lag = 2)
 ```
 
-A quick look at the first and last lines of the data frame
-can help to understand the lagged variable structure:
+The most important arguments of this function are `max_lag` and `tau`;
+check the help page of this function (`help(make_tutorial)`) for more
+details.  Anyway, a quick look at the first and last lines of the data
+frame can help to understand the lagged variable structure created by
+`make_block`:
 
 
 ```{r check lagged data frame}
@@ -154,44 +157,38 @@ In fact this similarity is well defined in topological
 terms. A key property of a valid shadow manifold 
 is that it is a one-to-one map of the attractor.
 
-But a shadow manifold will only be valid in this sense
-if it is embedded in the correct number of dimensions.
-There is an optimal number of dimensions to build
-a valid state space reconstruction, which we call
-the **embedding dimension** of an manifold.
-In this simple case we obviously need two dimensions.
-Takens' Theorem gives us an upper limit - it 
-guarantees that the number of dimensions
-is up to 2D + 1, where D is the dimensionality of
-the attractor. Finding the optimal embedding 
-dimension is part of a vast topic called *Embedology*
-(Sauer *et al.* 1991), and the package `rEDM` 
-provide some methods to do this.
-We will learn more abou this in the following tutorials 
-of this course.
+But a shadow manifold will only be valid in this sense if it is
+embedded in the correct number of dimensions.  There is an optimal
+number of dimensions to build a valid state space reconstruction,
+which we call the **embedding dimension** of an manifold.  In this
+simple case we obviously need two dimensions.  Takens' Theorem gives
+us an upper limit - it guarantees that the number of dimensions is up
+to 2D + 1, where D is the dimensionality of the attractor. Finding the
+optimal embedding dimension is part of a vast topic called
+*Embedology* (Sauer *et al.* 1991), and the package `rEDM` provide
+some methods to do this.  We will learn more abou this in the
+following tutorials of this course.
 
 
 # Noisy data
 
-How robust is the attractor reconstruction to random noise?
-There are two main types of noise or error in data, which we call
-**process errors** and
-**observational errors**. The first one is about random changes of the
-state variables, like environmental fluctuations that affect the
-dynamic. The
-second type of error is related to measurement error in
-the data, for instance when we miss individuals of some species when counting them,
-or have limited precision (inherent to all measurement).
-Observational errors do not affect the dynamics, only the portrait
-we make of it.
+How robust is the attractor reconstruction to random noise?  There are
+two main types of noise or error in data, which we call **process
+errors** and **observational errors**. The first one is about random
+changes of the state variables, like environmental fluctuations that
+affect the dynamic. The second type of error is related to measurement
+error in the data, for instance when we miss individuals of some
+species when counting them, or have limited precision (inherent to all
+measurement).  Observational errors do not affect the dynamics, only
+the portrait we make of it.
 
-In this section, we check how robust the attractor is to measurement 
-error by adding simulated noise to the original time series.
-Use the commands below to
-simulate that the time series has independent measurement errors with constant variance.
-To do this, we add to each observation a value drawn from a Gaussian distribution with zero mean and
-standard deviation which is 1/12 of the standard deviation of the
-time series itself. 
+In this section, we check how robust the attractor is to measurement
+error by adding simulated noise to the original time series.  Use the
+commands below to simulate that the time series has independent
+measurement errors with constant variance.  To do this, we add to each
+observation a value drawn from a Gaussian distribution with zero mean
+and standard deviation which is 1/12 of the standard deviation of the
+time series itself.
 
 
 ```{r plot one 2nd time series alone}
@@ -266,23 +263,23 @@ plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
 
 # Exercises
 
-## What is the effect of $\tau$ ?
+## What is the effect of sampling interval?
 
 The commands below simulate a new time series of the bi-dimensional
 harmonic oscillator without measurement
 error but with a much smaller interval between observations 
-($\tau=0.01$ time units). 
+(0.01 time units). 
 
 
-```{r simulates oscillator series with smaller tau}
+```{r simulates oscillator series with smaller sampling }
 time4<-seq(0, 500, by = 0.01) 
 x4<-sin(time4)
 y4<-cos(time4)
 ```
 
-This change in $\tau$ affects the shape of the reconstruction:
+This change of the sampling frequency affects the shape of the reconstruction:
 
-```{r smaller tau manifold}
+```{r smaller sampling interval manifold}
 df4 <- make_block(data.frame(x=x4), t=time4)
 plot(x_1 ~ x, data=df4, type="l",
      xlab = "X", ylab = "X(t + tau)" )
@@ -293,7 +290,7 @@ and how to solve them?
 
 ### Hints
 
-**1.** The command below adds a line $X(t) = X(t + tau)$ to the state space reconstruction, 
+**1.** The command below adds a line $X(t) = X(t + \tau)$ to the state space reconstruction, 
 which can help you to understand the problem with small values of $\tau$:
 
 ```{r abline, eval=FALSE}
@@ -322,14 +319,18 @@ plot( X ~ time, data = prob2, type="l")
 
 ### Hints
 
-**1.** Keep in mind the insight from the previous problem: 
-the value of $\tau$ 
-change the shape of the shadow manifold.
+**1.** Recall from the previous problem that 
+the sampling interval changes the shape of the shadow manifold. Using
+models, you control this sampling frequency; usually not so with
+data. Then you can only vary $\tau$, which is by how many time steps
+each variable is lagged.  For details see the help page of the
+`make_block` function.
 
 **2.** To create a simple 3D plot in R you can use the 
 `scatterplot3d` package. The example below 
 does this for one of the noisy
 time series we examined above:
+
 
 ```{r 3D plot with scatterplot3d}
 ## Loads the package
@@ -366,6 +367,7 @@ a video by Sugihara's Lab.
   of statistical Physics, 65(3), pp.579-616. 
 
 # Glossary
+
 ```{r include glossary, child = '../glossary.md'}
 ```
 

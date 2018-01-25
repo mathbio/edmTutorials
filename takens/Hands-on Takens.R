@@ -37,7 +37,7 @@ lines(time1[ind], y1[ind], col = "blue")
 legend("topright", c("X","Y"), col=c("red", "blue"),
        lty=1, bty="n")
 
-## ----load make_block, eval=TRUE, echo=FALSE------------------------------
+## ----load make_block, eval=TRUE, echo=TRUE-------------------------------
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 
 ## ----plot one time series alone------------------------------------------
