@@ -214,7 +214,7 @@ We can also plot $M_X$ with the predictor (red dot) and the respective
 neighbours simplex_Mx (blue dots). Zoom in to see all the dots.
 
 ```{r MX X_xmap_Y, echo=FALSE, fig.align='center'}
-p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X(t-1)'),title='Mx') %>%
   add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
   add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(predictor,neigb_X),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_X)))
@@ -226,7 +226,7 @@ $M_Y$, creating the simplex_My. Note that simplex_My has the same indexes as
 simplex_Mx.  The figure below shows $M_Y$ and simplex_My (green dots).
 
 ```{r MY_X_xmap_Y, echo=FALSE}
-p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y (t-1)'),title='My') %>%
   add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
   add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(neigb_X),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_X)))
@@ -272,7 +272,8 @@ fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
 plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
 plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed Y",
 ylab = "Predicted Y")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+#abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+abline(0,1)
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_Y<-observed_all_Y[predictor-2]
 predicted_pred_Y<-predicted_all_Y[predictor-2]
@@ -284,7 +285,14 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 ## Cross-mapping from $M_Y$ to $M_X$ (Y_xmap_X)
 
 Similarly to the previous mapping, we can now do the opposite: use $Y$ to
-predict values of $X$.  We obtain the indexes of the $E^*+1$ nearest neighbors
+predict values of $X$.  
+Now, we want to predict the value $X(t=70)$:
+
+```{r MX Y_xmap_X_code}
+print(X[predictor])
+```
+
+We obtain the indexes of the $E^*+1$ nearest neighbors
 of the given predictor. Since we are now cross mapping from $M_Y$ to $M_X$,
 the simplex_My is generated directly from the shadow manifold $M_Y$. Again,
 we first create a matrix of distances among the states of $M_Y$ and then we
@@ -301,7 +309,7 @@ The following plot presents $M_Y$ with the predictor (red dot) and respective
 simplex_My (blue dots).
 
 ```{r MY Y_xmap_X, echo=FALSE, fig.align='center'}
-p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y(t-1)'),title='My') %>%
   add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
   add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(predictor,neigb_Y),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_Y)))
@@ -313,7 +321,7 @@ simplex_Mx has the same indexes as simplex_My. The figure below shows $M_X$
 and simplex_Mx (green dots).
 
 ```{r MX_Y_xmap_X, echo=FALSE}
-p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X (t-1)'),title='Mx') %>%
   add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
   add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(neigb_Y),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_Y)))
@@ -343,7 +351,8 @@ fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
 plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
 ylab = "Predicted X")
-abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+#abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+abline(0,1)
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
 predicted_pred_X<-predicted_all_X[predictor-2]
@@ -407,27 +416,24 @@ we expect to see the convergence of the cross mapping (CCM).
    the model so that the Y variable causes changes in X.
 2. What if there is no interaction between X and Y?
 3. What about both variables interacting with each other (X causing X and Y
-   causing X)?
+   causing X)? 
 4. Identifying causal networks within systems is very important for effective
    policy and management recommendations on *e.g.* climate, ecosystem
    services, epidemiology and financial regulation.  In the following
-   exercise, you should use CCM to identify causality between anchovy landings
-   in California and Newport Pier sea-surface temperature.
+   exercise, you should use CCM to identify causality among sardine,
+   anchovy, and sea surface temperature measured at Scripps
+   Pier and Newport Pier, California.
 
-```{r ex3}
+```{r ex4}
 data(sardine_anchovy_sst)
+head(sardine_anchovy_sst)
 ```
 
 # Learn more 
 
 **[Mesmas referencias dos simplex?]**
-* Sugihara G. and R. M. May. 1990. Nonlinear forecasting as a way of distinguishing chaos 
-from measurement error in time series. Nature 344:734–741.
-* Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. 
-Philosophical Transactions: Physical Sciences and Engineering 348:477–495.
-* Anderson C. & Sugihara G. Simplex projection - Order out the chaos. http://deepeco.ucsd.edu/simplex/
-* ["Simplex projection walkthrough"](http://opetchey.github.io/RREEBES/Sugihara_and_May_1990_Nature/Simplex_projection_walkthrough.html), a tutorial by Owen Petchey.
 
+* Sugihara G, May R, Ye H, Hsieh C-h, Deyle E, Fogarty M, Munch S. 2012. Detecting Causality in Complex Ecosystems. Science 338:496–500.
 
 [^1]: Taken from [rEDM
 vignette](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html)

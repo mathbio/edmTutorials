@@ -80,14 +80,14 @@ neigh_X_print<-c(neigb_X)
 print(paste('simplex_Mx:',list(neigh_X_print)))
 
 ## ----MX X_xmap_Y, echo=FALSE, fig.align='center'-------------------------
-p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MX_X_to_Y <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X(t-1)'),title='Mx') %>%
   add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
   add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(predictor,neigb_X),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_X)))
 p_MX_X_to_Y
 
 ## ----MY_X_xmap_Y, echo=FALSE---------------------------------------------
-p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MY_X_to_Y <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y (t-1)'),title='My') %>%
   add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
   add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(neigb_X),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_X)))
@@ -114,11 +114,15 @@ fit_YX<-lm(predicted_all_Y ~ observed_all_Y)
 plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
 plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed Y",
 ylab = "Predicted Y")
-abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+#abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
+abline(0,1)
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_Y<-observed_all_Y[predictor-2]
 predicted_pred_Y<-predicted_all_Y[predictor-2]
 points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
+
+## ----MX Y_xmap_X_code----------------------------------------------------
+print(X[predictor])
 
 ## ----neighbors_y---------------------------------------------------------
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
@@ -127,14 +131,14 @@ neigh_Y_print<-c(neigb_Y)
 print(paste('simplex_My:',list(neigh_Y_print)))
 
 ## ----MY Y_xmap_X, echo=FALSE, fig.align='center'-------------------------
-p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MY_Y_to_X <- plot_ly(Shadow_MY, x=~Y, y=~Y_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'Y'),yaxis = list(title = 'Y(t-1)'),title='My') %>%
   add_markers(text = paste("time =",1:length(X)), showlegend = FALSE) %>%
   add_trace( x = ~Y, y=~Y_1,data=Shadow_MY[c(predictor,neigb_Y),],opacity=1,marker=list(color=c("red","blue","blue","blue")),type="scatter", mode="markers",text = paste("time =",c(predictor,neigb_Y)))
 p_MY_Y_to_X
 
 ## ----MX_Y_xmap_X, echo=FALSE---------------------------------------------
-p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.25) %>%
+p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opacity=0.1) %>%
   layout(xaxis = list(title = 'X'),yaxis = list(title = 'X (t-1)'),title='Mx') %>%
   add_markers(text = paste("time =",1:length(Y)), showlegend = FALSE) %>%
   add_trace( x = ~X, y=~X_1,data=Shadow_MX[c(neigb_Y),],opacity=1,marker=list(color=c("green","green","green")),type="scatter", mode="markers",text = paste("time =",c(neigb_Y)))
@@ -156,7 +160,8 @@ fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
 plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
 ylab = "Predicted X")
-abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+#abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
+abline(0,1)
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
 predicted_pred_X<-predicted_all_X[predictor-2]
@@ -181,6 +186,7 @@ lines(Y_xmap_X_means$lib_size, pmax(0, Y_xmap_X_means$rho), col = "blue")
 legend(x = "topleft", legend = c("X_xmap_Y", "Y_xmap_X"), col = c("red", "blue"),
        cex=1.1,lwd=2, inset = 0.02)
 
-## ----ex3-----------------------------------------------------------------
+## ----ex4-----------------------------------------------------------------
 data(sardine_anchovy_sst)
+head(sardine_anchovy_sst)
 
