@@ -285,18 +285,17 @@ points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
 ## Cross-mapping from $M_Y$ to $M_X$ (Y_xmap_X)
 
 Similarly to the previous mapping, we can now do the opposite: use $Y$ to
-predict values of $X$.  
-Now, we want to predict the value $X(t=70)$:
+predict values of $X$. Now, we want to predict the value of $X(t=70)$:
 
 ```{r MX Y_xmap_X_code}
 print(X[predictor])
 ```
 
-We obtain the indexes of the $E^*+1$ nearest neighbors
-of the given predictor. Since we are now cross mapping from $M_Y$ to $M_X$,
-the simplex_My is generated directly from the shadow manifold $M_Y$. Again,
-we first create a matrix of distances among the states of $M_Y$ and then we
-select the $E^*+1$ nearest neighbors.
+We obtain the indexes of the $E^*+1$ nearest neighbors of the given predictor.
+Since we are now cross mapping from $M_Y$ to $M_X$, the simplex_My is
+generated directly from the shadow manifold $M_Y$. Again, we first create a
+matrix of distances among the states of $M_Y$ and then we select the $E^*+1$
+nearest neighbors.
 
 ```{r neighbors_y}
 dist.matrix_Y <- as.matrix(dist(Shadow_MY, upper=TRUE))
@@ -328,73 +327,80 @@ p_MX_Y_to_X <- plot_ly(Shadow_MX, x=~X, y=~X_1, marker=(list(color=grey)), opaci
 p_MX_Y_to_X
 ```
 
-The simplex_Mx will then be used to estimate the value of the predictor in
+The simplex_Mx will then be used to estimate the predicted value of the predictor in
 $M_X$, obtaining the predicted value $\tilde{X}(t)$.
 
 ```{r estimating X from Y (Y_xmap_X)}
 lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y",
- "Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
+block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y", "Y_1"),
+                                   target_column = "X", stats_only = FALSE, first_column_time = TRUE)
 observed_all_X <- block_lnlp_output_YX$model_output[[1]]$obs
 predicted_all_X <- block_lnlp_output_YX$model_output[[1]]$pred
 pred_obs_X<-as.data.frame(cbind(predicted_all_X,observed_all_X))
 colnames(pred_obs_X)<-c('Predicted X','Observed X')
 head(pred_obs_X)
-
 ```
 
-Below is the plot for all predictions of X (mapped from Y: Y_xmap_X) against the real observations, plus the Pearson's correlation coefficient.
-The red dot represents the predictor (t=70) used in the example above.
+Below is the plot for all predictions of $X$ (mapped from $Y$: Y_xmap_X)
+against the real observations, plus the Pearson's correlation coefficient.
+The red dot represents the predictor (at $t=70$) used in the example above.
 
 ```{r plot_obs_pred_MY_MX}
 fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
-plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
-ylab = "Predicted X")
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range,
+     xlab = "Observed X", ylab = "Predicted X")
 #abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
 abline(0,1)
-legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),
+       inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
 predicted_pred_X<-predicted_all_X[predictor-2]
 points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
-
 ```
 
-Note that the Pearson correlation of Y_xmap_X (r = 0.68) is different than the X_xmap_Y (r = -0.08)
+Note that the Pearson correlation of Y_xmap_X (r = 0.68) is different than the
+X_xmap_Y (r = -0.08). What is going on?
 
 
 ## But what causes what?
 
-The Pearson correlation of Y_xmap_X is different than the X_xmap_Y. When we
-used Y to estimate (map) X we obtained good predictions (r = 0.68). However,
-when we used X to estimate (map) Y, the correlation between estimate and
-observed was quite low (r = -0.08).  This means that there is information
-about X dynamics inside the Y dynamics, therefore we can use Y to estimate X.
-Hence, if there is information of X within Y, this means that X somehow
-influences and causes Y.  Indeed, since all our data is synthetic, we know
-this is true: we created the variable X independently of Y, and X was causing
-changes in Y.  So when X causes Y, the cross mapping skill from $M_Y$ to $M_X$
-(Y_xmap_X) will generally gives us good results (high correlations), but *not*
-X_xmap_Y.  It is *very* important to notice that there is an inverse relation
-between cross mapping and causality: if X causes Y (X --> Y), Y cross map of X
-(Y_xmap_X) shows positive correlation.
+The Pearson correlation of Y_xmap_X is much larger than the X_xmap_Y. When we
+used $Y$ to estimate (map) $X$, we obtained good predictions (r = 0.68).
+However, when we used $X$ to estimate (map) $Y$, the correlation between
+estimate and observed was quite low (r = -0.08).  This means that the Y
+dynamics contains information about the dynamics of $X$, and therefore we can
+use $Y$ to estimate $X$. This means that $X$ somehow influences (causes!) $Y$.
+Indeed, since all our data is synthetic, we know this is true: we created the
+variable $X$ independently of $Y$, and $X$ was causing changes in $Y$. So when
+$X$ causes $Y$, the cross mapping skill from $M_Y$ to $M_X$ (Y_xmap_X) will
+generally gives us good results (high correlations), but *not* X_xmap_Y.  It
+is *very* important to notice that there is an inverse relation between cross
+mapping and causality: if $X$ causes $Y$ ($X \therefore Y$), $Y$ cross map of
+$X$ (Y_xmap_X) shows a positive (large) correlation.
 
 ## Convergent Cross Mapping (CCM)
 
-Convergence means that the estimates from the cross-mapping improve with increasing time-series length. The length L is the sample size used to construct a library.
+Convergence means that the estimates from the cross-mapping improve as we
+increase the length of the time-series. The length L is the sample size used
+to construct a library.
 
 
 ```{r convergent}
 # cross map from X to Y
-X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y",
+               lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE,
+               replace = TRUE)
 # cross map from Y to X
-Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X",
+               lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE,
+               replace = TRUE)
 
-#mean values
+# mean values
 X_xmap_Y_means <- ccm_means(X_xmap_Y)
 Y_xmap_X_means <- ccm_means(Y_xmap_X)
 
-#plot graphs
+# plot graphs
 plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",
      main='Two Species', xlab = "Library Size (L)",
      ylab = "Cross Map Skill (Pearson rho)", ylim = c(0,1))
@@ -403,8 +409,8 @@ legend(x = "topleft", legend = c("X_xmap_Y", "Y_xmap_X"), col = c("red", "blue")
        cex=1.1,lwd=2, inset = 0.02)
 ```
 
-This means that the more data you have (*i.e.* the larger the L), the more
-trajectories you have to define the attractor, resulting thus in closer
+This means that the more data you have (*i.e.* the larger L), the more
+trajectories you have to infer the attractor, resulting thus in closer
 nearest neighbors and less estimation error (*i.e.* a higher correlation
 coefficient between estimated and observed). That is, if there is causation,
 we expect to see the convergence of the cross mapping (CCM).
@@ -412,17 +418,16 @@ we expect to see the convergence of the cross mapping (CCM).
 
 # Exercises
 
-1. What happens when there is an inversion in cause-effect relation? Change
-   the model so that the Y variable causes changes in X.
+1. What happens when we invert the cause-effect relationship? Change the model
+   so that the Y variable causes changes in X, but not the other way around.
 2. What if there is no interaction between X and Y?
 3. What about both variables interacting with each other (X causing X and Y
-   causing X)? 
-4. Identifying causal networks within systems is very important for effective
+   causing X)?
+4. Identifying causal links within systems is very important for effective
    policy and management recommendations on *e.g.* climate, ecosystem
    services, epidemiology and financial regulation.  In the following
-   exercise, you should use CCM to identify causality among sardine,
-   anchovy, and sea surface temperature measured at Scripps
-   Pier and Newport Pier, California.
+   exercise, use CCM to identify causality among sardine, anchovy, and sea
+   surface temperature measured at Scripps Pier and Newport Pier, California.
 
 ```{r ex4}
 data(sardine_anchovy_sst)
@@ -434,6 +439,12 @@ head(sardine_anchovy_sst)
 **[Mesmas referencias dos simplex?]**
 
 * Sugihara G, May R, Ye H, Hsieh C-h, Deyle E, Fogarty M, Munch S. 2012. Detecting Causality in Complex Ecosystems. Science 338:496–500.
+
+
+# Glossary
+```{r include glossary, child = '../glossary.md'}
+```
+
 
 [^1]: Taken from [rEDM
 vignette](https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.html)

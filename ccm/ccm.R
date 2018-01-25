@@ -146,39 +146,42 @@ p_MX_Y_to_X
 
 ## ----estimating X from Y (Y_xmap_X)--------------------------------------
 lib<-lib <- c(1, NROW(Shadow_MXY))
-block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y",
- "Y_1"), target_column = "X", stats_only = FALSE, first_column_time = TRUE)
+block_lnlp_output_YX <- block_lnlp(Shadow_MXY, lib = lib, pred = lib, columns = c("Y", "Y_1"),
+                                   target_column = "X", stats_only = FALSE, first_column_time = TRUE)
 observed_all_X <- block_lnlp_output_YX$model_output[[1]]$obs
 predicted_all_X <- block_lnlp_output_YX$model_output[[1]]$pred
 pred_obs_X<-as.data.frame(cbind(predicted_all_X,observed_all_X))
 colnames(pred_obs_X)<-c('Predicted X','Observed X')
 head(pred_obs_X)
 
-
 ## ----plot_obs_pred_MY_MX-------------------------------------------------
 fit_XY<-lm(predicted_all_X ~ observed_all_X)
 plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
-plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range, xlab = "Observed X",
-ylab = "Predicted X")
+plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range,
+     xlab = "Observed X", ylab = "Predicted X")
 #abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
 abline(0,1)
-legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),inset = 0.02,col = 'black',lty = 1)
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),
+       inset = 0.02,col = 'black',lty = 1)
 observed_pred_X<-observed_all_X[predictor-2]
 predicted_pred_X<-predicted_all_X[predictor-2]
 points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
 
-
 ## ----convergent----------------------------------------------------------
 # cross map from X to Y
-X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+X_xmap_Y<- ccm(XY, E = 2, lib_column = "X", target_column = "Y",
+               lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE,
+               replace = TRUE)
 # cross map from Y to X
-Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X", lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE, replace = TRUE)
+Y_xmap_X<- ccm(XY, E = 2, lib_column = "Y", target_column = "X",
+               lib_sizes = seq(10, 130, by = 10), num_samples = 100, random_libs = TRUE,
+               replace = TRUE)
 
-#mean values
+# mean values
 X_xmap_Y_means <- ccm_means(X_xmap_Y)
 Y_xmap_X_means <- ccm_means(Y_xmap_X)
 
-#plot graphs
+# plot graphs
 plot(X_xmap_Y_means$lib_size, pmax(0, X_xmap_Y_means$rho), type = "l", col = "red",
      main='Two Species', xlab = "Library Size (L)",
      ylab = "Cross Map Skill (Pearson rho)", ylim = c(0,1))
@@ -189,4 +192,8 @@ legend(x = "topleft", legend = c("X_xmap_Y", "Y_xmap_X"), col = c("red", "blue")
 ## ----ex4-----------------------------------------------------------------
 data(sardine_anchovy_sst)
 head(sardine_anchovy_sst)
+
+## ----include glossary, child = '../glossary.md'--------------------------
+
+
 
