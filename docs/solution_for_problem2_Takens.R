@@ -22,4 +22,6 @@ scatterplot3d(prob_block$X, prob_block$X_1, prob_block$X_2, type =  "l")
 
 ##an optimal tau for this problem wil be between 5 and 20##
 prob_block<-make_block(problem_time_series, max_lag = lag, tau = 5)
-scatterplot3d(prob_block$X, prob_block$X_5, prob_block$X_10, type =  "l")
+scatterplot3d(prob_block$X, prob_block$X_5, prob_block$X_10, type =  "l", main =  "The Lorenz Attractor")
+
+##This is the Lorenz attractor##
