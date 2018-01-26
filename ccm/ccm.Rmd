@@ -96,9 +96,10 @@ coefficient between $X$ and $Y$:
 ```{r plot correlation}
 fit<-lm(Y ~ X)
 plot(X,Y,main='Correlation (X,Y)')
-abline(fit$coefficients[1],fit$coefficients[2])
+abline(0,1,lty=2)
+#abline(fit$coefficients[1],fit$coefficients[2])
 legend(x = "bottomleft", legend = paste('r =',round(cor(X,Y)*100)/100),
-       inset = 0.02,col = 'black',lty = 1)
+       inset = 0.02,col = 'black')
 ```
 
 The results show that $X$ and $Y$ are not correlated, even though the data
@@ -273,8 +274,8 @@ plot_range <- range(c(observed_all_Y, predicted_all_Y), na.rm = TRUE)
 plot(observed_all_Y,predicted_all_Y, xlim = plot_range, ylim = plot_range, xlab = "Observed Y",
 ylab = "Predicted Y")
 #abline(fit_YX$coefficients[1],fit_YX$coefficients[2])
-abline(0,1)
-legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black',lty = 1)
+abline(0,1,lty=2)
+legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_Y, predicted_all_Y)*100)/100),inset = 0.02,col = 'black')
 observed_pred_Y<-observed_all_Y[predictor-2]
 predicted_pred_Y<-predicted_all_Y[predictor-2]
 points(observed_pred_Y,predicted_pred_Y,col='red',pch=16,cex=1.2)
@@ -351,9 +352,9 @@ plot_range <- range(c(observed_all_X, predicted_all_X), na.rm = TRUE)
 plot(observed_all_X, predicted_all_X, xlim = plot_range, ylim = plot_range,
      xlab = "Observed X", ylab = "Predicted X")
 #abline(fit_XY$coefficients[1],fit_XY$coefficients[2])
-abline(0,1)
+abline(0,1,lty=2)
 legend(x = "bottomright", legend = paste('r =',round(cor(observed_all_X,predicted_all_X)*100)/100),
-       inset = 0.02,col = 'black',lty = 1)
+       inset = 0.02,col = 'black')
 observed_pred_X<-observed_all_X[predictor-2]
 predicted_pred_X<-predicted_all_X[predictor-2]
 points(observed_pred_X,predicted_pred_X,col='red',pch=16,cex=1.2)
@@ -435,8 +436,6 @@ head(sardine_anchovy_sst)
 ```
 
 # Learn more 
-
-**[Mesmas referencias dos simplex?]**
 
 * Sugihara G, May R, Ye H, Hsieh C-h, Deyle E, Fogarty M, Munch S. 2012. Detecting Causality in Complex Ecosystems. Science 338:496–500.
 
