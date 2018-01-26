@@ -13,5 +13,5 @@ Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/m
 ## 3. [Convergent cross-mapping (CCM)](ccm.html)
 Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.Rmd) or the [R file](https://raw.githubusercontent.com/mathbio/edmTutorials/master/ccm/ccm.R).
 
-## 4. Wrap up
+## 4. [Readings and resources](reading_and_resources.html)
 
