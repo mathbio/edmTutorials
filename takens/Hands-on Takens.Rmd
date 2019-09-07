@@ -264,7 +264,7 @@ plot_ly(df3, x = ~x, y=~x_1, z=~x_2, type="scatter3d",
 The commands below simulate a new time series of the bi-dimensional
 harmonic oscillator without measurement
 error but with a much smaller interval between observations 
-(0.01 time units). 
+(0.01 time units instead of 0.2). 
 
 
 ```{r simulates oscillator series with smaller sampling }
@@ -281,13 +281,13 @@ plot(x_1 ~ x, data=df4, type="l",
      xlab = "X", ylab = "X(t + tau)" )
 ```
 
-How do you explain that? Which practical issues does this fact bring
+How do you explain this? Which practical issues does this fact bring
 and how to solve them?
 
 ### Hints
 
 **1.** The command below adds a line $X(t) = X(t + \tau)$ to the state space reconstruction, 
-which can help you to understand the problem with small values of $\tau$:
+which can help you understand the problem regarding small values of $\tau$:
 
 ```{r abline, eval=FALSE}
 abline(0,1, col="red")
@@ -299,15 +299,15 @@ abline(0,1, col="red")
 ## Attractor reconstruction
 
 In this exercise you have to
-reconstruct the state space of a time series in this, 
-checking if a three-dimensional plot
-improve the reconstruction.
+reconstruct the state space of a time series, 
+and check if a three-dimensional plot
+improves the reconstruction.
 To load the data in R run the command:
 
 ```{r problem time series}
 prob2 <- read.csv("https://raw.githubusercontent.com/mathbio/edmTutorials/master/takens/problem-time-series.csv")
 ```
-To take a look in the time series plot run:
+To take a look at the time series plot run:
 
 ```{r plot time series problem 2}
 plot( X ~ time, data = prob2, type="l")
@@ -316,15 +316,16 @@ plot( X ~ time, data = prob2, type="l")
 ### Hints
 
 **1.** Recall from the previous problem that 
-the sampling interval changes the shape of the shadow manifold. Using
-models, you control this sampling frequency; usually not so with
-data. Then you can only vary $\tau$, which is by how many time steps
-each variable is lagged.  For details see the help page of the
+the sampling interval changes the shape of the shadow manifold. 
+The sampling frequency can be controlled when using models, 
+but with data this is usually not possible. 
+With data, you can only vary $\tau$, which is by how many time steps
+each variable is lagged. For details see the help page of the
 `make_block` function.
 
 **2.** To create a simple 3D plot in R you can use the 
 `scatterplot3d` package. The example below 
-does this for one of the noisy
+plots it for one of the noisy
 time series we examined above:
 
 
