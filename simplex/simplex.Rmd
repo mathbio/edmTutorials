@@ -171,8 +171,8 @@ manifold are trajectories that match the focal one, they provide a
 good guess of what will happen next in the time series. To show this
 in the plot below, we moved one time step forward each highlighted
 trajectory that corresponds to a neighboring point in the shadow
-manifold. The arrows project the resulting values of X to t=`r
-length(X)`, and the black triangle is an average of these projected
+manifold. The arrows project the resulting values of X to t=`r length(X)`, 
+and the black triangle is an average of these projected
 points, which is the forecasted value of X for this time step. The
 actual value of X(t=`r length(X)`) is the last point in the series. Not bad! 
 
