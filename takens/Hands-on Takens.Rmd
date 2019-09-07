@@ -100,10 +100,11 @@ Now suppose that all the information you have about this system is a
 time series of one of the state variables, say $X(t)$.  Because $Y(t)$
 is missing, we are not able to construct the state space as we see
 above, but Takens theorem tells us that we can do a reconstruction of
-the state space that recovers the information from the original state
+the state space that recovers the information from the 
+al state
 space. This **state space reconstruction** creates an **embedding** of
 a **shadow manifold** of the attractor. So we can define the shadow
-manifold as a valid topological reconstruction of the original attractor.
+manifold as a valid topological reconstruction of the attractor.
 
 
 To do a state space reconstruction we create new variables by lagging
