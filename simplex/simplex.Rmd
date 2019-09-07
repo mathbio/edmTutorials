@@ -81,12 +81,12 @@ plot(X, xlab="Time", ylab="X", type="b", lty=3)
 ```
 
 Surprisingly, it is possible to recover the rules that govern a
-dynamical system using the time series (*i.e.* sequence of
-observations) of a single variable of the system.  Takens Theorem
+dynamical system using the time series (*i.e.*, sequence of
+observations) of a single variable of the system. The Takens Theorem
 tells us that there is a simple way to recover the properties of a
 dynamical system by building a lagged coordinate plot.  Below you can
 see such a plot for the X variable, where each axis is the lagged X
-time series itself, *i.e.* $X(t), X(t+1), X(t+2)$.  Each point in this
+time series itself, *i.e.*, $X(t), X(t+1), X(t+2)$.  Each point in this
 3-D plot depicts the state of the system at a given time *t* and in
 the next two time steps (*t+1* and *t+2*).  If you play with the plot
 turning it around, you can see that the points form a clear
