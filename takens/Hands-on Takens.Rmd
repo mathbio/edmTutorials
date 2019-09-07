@@ -325,8 +325,7 @@ each variable is lagged. For details see the help page of the
 
 **2.** To create a simple 3D plot in R you can use the 
 `scatterplot3d` package. The example below 
-plots it for one of the noisy
-time series we examined above:
+plots it for one of the noisy time series we examined above:
 
 
 ```{r 3D plot with scatterplot3d}
