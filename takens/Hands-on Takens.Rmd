@@ -32,7 +32,7 @@ This tutorial presents the general idea of attractor reconstruction
 with synthetic data, and proposes two exercises with simulated data.
 For these activities, you will need the most recent version of
 [R](https://cran.r-project.org/) and the rEDM package installed in
-your work computer.  To start, open R and load the package by typing
+your work computer. To start, open R and load the package by typing
 the following code in the R console:
 
 
@@ -54,7 +54,7 @@ vignette("rEDM-tutorial", package="rEDM")
 
 # A simple case: harmonic oscillator
 
-Let's get the grips with R language and to figure out how to
+Let's first get to grips with R language, and figure out how to
 reconstruct a state space with only one time series and its lags.  For
 the first example, we use a very well-known system and its
 representation on state space, the harmonic oscillator:
@@ -98,11 +98,11 @@ legend("topright", c("X","Y"), col=c("red", "blue"),
 
 Now suppose that all the information you have about this system is a
 time series of one of the state variables, say $X(t)$.  Because $Y(t)$
-is missing, we are not able to construct a state space as we see
+is missing, we are not able to construct the state space as we see
 above, but Takens theorem tells us that we can do a reconstruction of
-the state space that recovers the information of the original state
+the state space that recovers the information from the original state
 space. This **state space reconstruction** creates an **embedding** of
-a **shadow manifold** of the atractor.  So we can define the shadow
+a **shadow manifold** of the attractor. So we can define the shadow
 manifold as a valid topological reconstruction of the attractor.
 
 
@@ -111,17 +111,16 @@ the time series by multiples of a time interval $\tau$. In this case
 we will use the interval between observations ($\tau=0.2$ time units).
 The R commands below create a data table object (which is called a
 *data frame* in R) with the original time series and its lagged
-version. The handy function `make_block` by the rEDM authors does this
-job. Use this command to download the function code and load it in
-your R workspace (the function will be included in the rEDM package in
-future releases):
+version. The handy function `make_block` written by the authors of the rEDM package does this
+job. Use the command below to download the function code and load it in
+your R workspace (this function will be included in future releases of the rEDM package):
 
 ```{r load make_block, eval=TRUE, echo=TRUE}
 source("https://raw.githubusercontent.com/mathbio/edmTutorials/master/utilities/make_block.R")
 ```
 
-And now you can create a data frame with the original and lagged 
-series of data:
+Now you can create a data frame with the original and lagged 
+series of data using the `make_block` function:
 
 
 ```{r plot one time series alone}
@@ -131,8 +130,8 @@ df1 <- make_block(data.frame(x=x1), t=time1, max_lag = 2)
 
 The most important arguments of this function are `max_lag` and `tau`;
 check the help page of this function (`help(make_tutorial)`) for more
-details.  Anyway, a quick look at the first and last lines of the data
-frame can help to understand the lagged variable structure created by
+details. A quick look at the first and last lines of the data
+frame can help you understand the lagged variable structure created by
 `make_block`:
 
 
@@ -144,7 +143,7 @@ tail(df1)
 
 By plotting the time series
 as a function of their lagged versions we get the
-shadow manifold, which in is this bi-dimensional 
+shadow manifold, which in this bi-dimensional 
 case is easy to see:
 
 ```{r shadow manifold}
