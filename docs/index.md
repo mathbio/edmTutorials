@@ -1,6 +1,6 @@
 # Introduction to `rEDM`: Empirical Dynamics Modeling in R
 
-This is a series of tutorials for the  [School on Physics Applications in Biology](http://www.ictp-saifr.org/?page_id=15616) of 2018, created by Brenno Cabella, Paulo Inácio Prado, Renato Mendes Coutinho,  Marina Rillo, Rafael Lopes and Roberto Kraenkel.
+This is a series of tutorials for the  [School on Physics Applications in Biology](http://www.ictp-saifr.org/?page_id=15616) of 2018, created by Brenno Cabella, Paulo Inácio Prado, Renato Mendes Coutinho, Marina Rillo, Rafael Lopes and Roberto Kraenkel.
 
 ## 0. [Installation instructions](install.md)
 
@@ -15,3 +15,4 @@ Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/m
 
 ## 4. [Readings and resources](reading_and_resources.html)
 
+## 5. [Extra] Slides to the Workshop on Time series analysis by a causation criteria:

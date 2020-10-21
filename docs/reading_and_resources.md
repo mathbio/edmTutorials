@@ -8,13 +8,16 @@
 
 - PNAS Commentary: <http://www.pnas.org/content/112/13/3856.short>
 
+- Frequent Asked Questions About EDM: <https://academic.oup.com/icesjms/article/77/4/1463/5643857>
+
 ## II.Essential Resource:
 
 The rEDM package on CRAN is a key resource that contains a tutorial that
 many have found useful. It consists of code and vignettes with data that
 will help implementing EDM analysis.
 
-* rEDM package: <https://cran.-project.org/web/packages/rEDM/index.html>
+* rEDM package: <https://cran.r-project.org/web/packages/rEDM/vignettes/rEDM-tutorial.pdf>
+* rEDM Get Started!: <https://ha0ye.github.io/rEDM/articles/rEDM.html>
 
 ## III. Additional Readings 
 
@@ -44,15 +47,27 @@ leverage): <http://science.sciencemag.org/content/353/6302/922/tab-figures-data>
 
 - Dixon et al Science (1999):  <http://science.sciencemag.org/content/283/5407/1528.full>, 
 <http://deepeco.ucsd.edu/~george/publications/01_noise_nonlinearity.pdf>
+
 - McGowan et al Ecology (2017) SIO Red tides: <http://onlinelibrary.wiley.com/doi/10.1002/ecy.1804/full>
 Hsieh et al Nature (2006): <https://www.nature.com/articles/nature03553>
+
 - Ye et al PNAS (2015): <http://www.pnas.org/content/112/13/E1569>
+
 - Glasser et al (2014): <http://onlinelibrary.wiley.com/doi/10.1111/faf.12037/full>
+
 - Deyle et. al. (2013): Climate effects on pacific sardines. Explains
     scenario exploration with EDM: <http://www.pnas.org/content/110/16/6430.full>
+    
 - Deyle et. al. (2016):Global Environmental Drivers of Flu. An interesting use of scenario exploration to discover a temperature
     threshold (75F) below which absolute humidity inhibits flu transmission and above which it promotes flu transmission: 
 	<http://www.pnas.org/content/113/46/13081.full>
+	
+- Ushio et. al. (2019):Fluctuating interaction network and time-varying stability of a natural fish community. A use of EDM to reveal a network of interaction between organism into acquatic ecosystem:
+  <https://www.nature.com/articles/nature25504>
+  
+- Runge et. al. (2019):Inferring causation from time series in Earth system sciences. A perspective for a intesive use of the framework of EDM to reveal and produce more direct inference of causality to better understand and better overview the Earth System:
+  <https://www.nature.com/articles/s41467-019-10105-3>
+  
 
 ## VI. Ancillary:
 
