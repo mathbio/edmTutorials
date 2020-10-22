@@ -15,4 +15,7 @@ Download [the notebook](https://raw.githubusercontent.com/mathbio/edmTutorials/m
 
 ## 4. [Readings and resources](reading_and_resources.html)
 
-## 5. [Extra] Slides to the Workshop on Time series analysis by a causation criteria:
+## Slides to the Workshop on Time series analysis by a causation criteria:
+  * Day 1: Takens Theorem and its consequences
+  * Day 2: Simplex projection
+  * Day 3: Real data, real problems
